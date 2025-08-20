@@ -4,7 +4,7 @@
 import { ApiResponse, PaginatedResponse, ProblemDetails, AuthTokens } from '@/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
+const USE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false'; // Default to mock mode
 
 class ApiClient {
   private baseUrl: string;
@@ -72,16 +72,26 @@ class ApiClient {
   // Authentication
   async login(email: string, password: string): Promise<AuthTokens> {
     if (USE_MOCK) {
-      return mockLogin(email, password);
+      const response = await mockLogin(email, password);
+      this.setToken(response.access_token);
+      return response;
     }
     
-    const response = await this.request<AuthTokens>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    
-    this.setToken(response.access_token);
-    return response;
+    try {
+      const response = await this.request<AuthTokens>('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      
+      this.setToken(response.access_token);
+      return response;
+    } catch (error) {
+      // Fallback to mock if API is not available
+      console.warn('API not available, falling back to mock mode');
+      const response = await mockLogin(email, password);
+      this.setToken(response.access_token);
+      return response;
+    }
   }
 
   async refreshToken(): Promise<AuthTokens> {

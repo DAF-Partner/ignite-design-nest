@@ -1,7 +1,7 @@
 // Professional Authentication Provider for B2B Debt Collection Platform
 // JWT-based authentication with role-based access control
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { User, AuthTokens } from '@/types';
 import { apiClient } from '@/lib/api';
 
@@ -131,9 +131,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'AUTH_LOGOUT' });
   };
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     dispatch({ type: 'CLEAR_ERROR' });
-  };
+  }, []);
 
   const hasRole = (role: string | string[]): boolean => {
     if (!state.user) return false;
