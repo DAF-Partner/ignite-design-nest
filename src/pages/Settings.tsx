@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,6 +59,7 @@ type PreferencesSettings = z.infer<typeof preferencesSchema>;
 export default function Settings() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { currentLanguage, setLanguage, getSupportedLanguages } = useLanguage();
   const [activeTab, setActiveTab] = useState('notifications');
 
   const notificationForm = useForm<NotificationSettings>({
@@ -85,7 +87,7 @@ export default function Settings() {
   const preferencesForm = useForm<PreferencesSettings>({
     resolver: zodResolver(preferencesSchema),
     defaultValues: {
-      language: 'en',
+      language: currentLanguage,
       timezone: 'UTC',
       dateFormat: 'MM/DD/YYYY',
       currency: 'EUR',
@@ -132,7 +134,10 @@ export default function Settings() {
 
   const onPreferencesSubmit = async (data: PreferencesSettings) => {
     try {
-      // TODO: Implement API call to update preferences
+      // Update language setting
+      setLanguage(data.language);
+      
+      // TODO: Implement API call to update other preferences
       console.log('Preferences:', data);
       
       toast({
@@ -451,10 +456,11 @@ export default function Settings() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="en">English</SelectItem>
-                                  <SelectItem value="de">Deutsch</SelectItem>
-                                  <SelectItem value="fr">Français</SelectItem>
-                                  <SelectItem value="es">Español</SelectItem>
+                                  {getSupportedLanguages().map((lang) => (
+                                    <SelectItem key={lang.code} value={lang.code}>
+                                      {lang.nativeName} ({lang.name})
+                                    </SelectItem>
+                                  ))}
                                 </SelectContent>
                               </Select>
                               <FormMessage />
