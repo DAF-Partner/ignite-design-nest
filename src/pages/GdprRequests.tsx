@@ -1,6 +1,3 @@
-// Professional GDPR Requests Management Page for B2B Debt Collection Platform
-// Complete privacy compliance workflow with request tracking and automated processing
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -8,7 +5,6 @@ import {
   Shield,
   Download,
   Eye,
-  Filter,
   Search,
   FileText,
   AlertTriangle,
@@ -19,11 +15,9 @@ import {
   Database,
   Trash2,
   FileDown,
-  Lock,
-  UserCheck,
-  AlertCircle,
   Plus,
-  ExternalLink
+  ExternalLink,
+  AlertCircle
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -46,16 +40,6 @@ import {
   DialogDescription,
   DialogFooter
 } from '@/components/ui/dialog';
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -70,25 +54,26 @@ const statusConfig = {
   pending: { 
     label: 'Pending Review', 
     icon: Clock, 
-    variant: 'warning' as const,
     description: 'Request received, awaiting processing'
   },
   processing: { 
     label: 'Processing', 
     icon: AlertCircle, 
-    variant: 'default' as const,
     description: 'Request being processed'
   },
   completed: { 
     label: 'Completed', 
     icon: CheckCircle, 
-    variant: 'success' as const,
     description: 'Request fulfilled'
+  },
+  cancelled: { 
+    label: 'Cancelled', 
+    icon: AlertTriangle, 
+    description: 'Request cancelled'
   },
   rejected: { 
     label: 'Rejected', 
     icon: AlertTriangle, 
-    variant: 'destructive' as const,
     description: 'Request declined'
   }
 };
@@ -97,32 +82,27 @@ const typeConfig = {
   SAR: {
     label: 'Subject Access Request',
     icon: FileDown,
-    description: 'Request for personal data held by the organization',
-    color: 'blue'
+    description: 'Request for personal data held by the organization'
   },
   ERASURE: {
     label: 'Right to Erasure',
     icon: Trash2,
-    description: 'Request to delete personal data',
-    color: 'red'
+    description: 'Request to delete personal data'
   },
   RECTIFICATION: {
     label: 'Right to Rectification',
     icon: FileText,
-    description: 'Request to correct inaccurate personal data',
-    color: 'green'
+    description: 'Request to correct inaccurate personal data'
   },
   PORTABILITY: {
     label: 'Data Portability',
     icon: Download,
-    description: 'Request for data in machine-readable format',
-    color: 'purple'
+    description: 'Request for data in machine-readable format'
   },
   OBJECTION: {
     label: 'Right to Object',
     icon: Shield,
-    description: 'Objection to processing of personal data',
-    color: 'orange'
+    description: 'Objection to processing of personal data'
   }
 };
 
@@ -136,7 +116,6 @@ export default function GdprRequests() {
   const [selectedRequest, setSelectedRequest] = useState<GdprRequest | null>(null);
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [showNewRequestDialog, setShowNewRequestDialog] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   // New request form
   const [newRequestType, setNewRequestType] = useState<string>('');
@@ -150,7 +129,6 @@ export default function GdprRequests() {
 
   // Load GDPR requests data
   useEffect(() => {
-    // In a real app, this would filter based on user role and permissions
     setRequests(mockGdprRequests);
   }, [user]);
 
@@ -213,7 +191,7 @@ export default function GdprRequests() {
       requestedByName: user?.name || 'Current User',
       dataSubject: newRequestSubject,
       description: newRequestDescription,
-      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date().toISOString(),
       affectedCases: []
     };
@@ -230,19 +208,6 @@ export default function GdprRequests() {
       title: 'Request Created',
       description: `GDPR request ${newRequest.id} has been submitted for processing.`
     });
-  };
-
-  const handleDeleteRequest = () => {
-    if (selectedRequest) {
-      setRequests(requests.filter(r => r.id !== selectedRequest.id));
-      setShowDeleteConfirm(false);
-      setShowRequestDialog(false);
-      
-      toast({
-        title: 'Request Deleted',
-        description: `GDPR request ${selectedRequest.id} has been permanently deleted.`
-      });
-    }
   };
 
   const getDaysRemaining = (dueDate: string) => {
@@ -264,7 +229,7 @@ export default function GdprRequests() {
     const percentage = Math.min(100, Math.max(0, (elapsedTime / totalTime) * 100));
     
     if (request.status === 'completed') return 100;
-    if (request.status === 'rejected') return 0;
+    if (request.status === 'rejected' || request.status === 'cancelled') return 0;
     
     return percentage;
   };
@@ -407,6 +372,7 @@ export default function GdprRequests() {
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="processing">Processing</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
                 </SelectContent>
               </Select>
@@ -502,7 +468,7 @@ export default function GdprRequests() {
                       </div>
                       
                       {/* Progress Bar */}
-                      {request.status !== 'completed' && request.status !== 'rejected' && (
+                      {request.status !== 'completed' && request.status !== 'rejected' && request.status !== 'cancelled' && (
                         <div className="mb-4">
                           <div className="flex items-center justify-between text-sm mb-2">
                             <span className="text-muted-foreground">Progress</span>
@@ -646,26 +612,6 @@ export default function GdprRequests() {
                     </div>
                   </>
                 )}
-                
-                {/* Actions for DPO */}
-                {user?.role === 'DPO' && selectedRequest.status !== 'completed' && (
-                  <>
-                    <Separator />
-                    <div className="flex gap-2">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => {
-                          setShowRequestDialog(false);
-                          setShowDeleteConfirm(true);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Request
-                      </Button>
-                    </div>
-                  </>
-                )}
               </div>
             </ScrollArea>
           )}
@@ -732,24 +678,6 @@ export default function GdprRequests() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete GDPR Request</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to permanently delete this GDPR request? This action cannot be undone and may affect compliance records.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteRequest} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete Request
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
