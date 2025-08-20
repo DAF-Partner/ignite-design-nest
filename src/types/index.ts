@@ -206,15 +206,27 @@ export interface CreateCaseRequest {
 export interface Tariff {
   id: string;
   name: string;
-  type: 'percentage' | 'fixed' | 'hybrid';
+  description?: string;
+  type: 'percentage' | 'fixed' | 'tiered';
   percentage?: number;
   fixedAmount?: number;
+  fixedFee?: number;
   currency: string;
   minAmount?: number;
   maxAmount?: number;
+  minimumFee?: number;
+  maximumFee?: number;
   clauseText: string;
   isActive: boolean;
   createdAt: string;
+  updatedAt?: string;
+  tiers?: TariffTier[];
+}
+
+export interface TariffTier {
+  minAmount: number;
+  maxAmount: number | null;
+  percentage: number;
 }
 
 export interface MessageTemplate {
@@ -223,11 +235,21 @@ export interface MessageTemplate {
   subject: string;
   content: string;
   type: 'initial_contact' | 'reminder' | 'legal_notice' | 'settlement_offer';
+  channel?: 'email' | 'sms' | 'letter' | 'phone';
   locale: string;
   version: number;
   isActive: boolean;
   legalNotice?: string;
+  variables?: TemplateVariable[];
   createdAt: string;
+  updatedAt?: string;
+}
+
+export interface TemplateVariable {
+  name: string;
+  description: string;
+  required: boolean;
+  defaultValue?: string;
 }
 
 // API Response Types

@@ -55,12 +55,15 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
 
-import type { MessageTemplate } from '@/types';
+import type { MessageTemplate, TemplateVariable } from '@/types';
 
 const mockTemplates: MessageTemplate[] = [
   {
     id: 'template_1',
     name: 'Initial Payment Request',
+    type: 'initial_contact',
+    locale: 'en-GB',
+    version: 1,
     channel: 'email',
     subject: 'Payment Required - Invoice #{invoiceNumber}',
     content: `Dear {debtorName},
@@ -79,7 +82,17 @@ Thank you for your prompt attention to this matter.
 Best regards,
 {agentName}
 {companyName}`,
-    variables: ['debtorName', 'invoiceNumber', 'amount', 'currency', 'dueDate', 'daysOverdue', 'contactPhone', 'agentName', 'companyName'],
+    variables: [
+      { name: 'debtorName', description: 'Name of the debtor', required: true },
+      { name: 'invoiceNumber', description: 'Invoice number', required: true },
+      { name: 'amount', description: 'Outstanding amount', required: true },
+      { name: 'currency', description: 'Currency code', required: true },
+      { name: 'dueDate', description: 'Original due date', required: true },
+      { name: 'daysOverdue', description: 'Number of days overdue', required: true },
+      { name: 'contactPhone', description: 'Contact phone number', required: false },
+      { name: 'agentName', description: 'Collection agent name', required: true },
+      { name: 'companyName', description: 'Company name', required: true }
+    ],
     isActive: true,
     createdAt: '2024-01-15T09:00:00Z',
     updatedAt: '2024-11-15T14:30:00Z'
@@ -87,6 +100,9 @@ Best regards,
   {
     id: 'template_2',
     name: 'Final Notice Before Legal Action',
+    type: 'legal_notice',
+    locale: 'en-GB',
+    version: 1,
     channel: 'letter',
     subject: 'FINAL NOTICE - Legal Action Pending',
     content: `FINAL NOTICE
@@ -117,7 +133,16 @@ Yours sincerely,
 {agentName}
 Senior Collection Agent
 {companyName}`,
-    variables: ['accountNumber', 'debtorName', 'amount', 'currency', 'bankDetails', 'companyName', 'paymentUrl', 'agentName'],
+    variables: [
+      { name: 'accountNumber', description: 'Account number', required: true },
+      { name: 'debtorName', description: 'Name of the debtor', required: true },
+      { name: 'amount', description: 'Outstanding amount', required: true },
+      { name: 'currency', description: 'Currency code', required: true },
+      { name: 'bankDetails', description: 'Bank transfer details', required: true },
+      { name: 'companyName', description: 'Company name', required: true },
+      { name: 'paymentUrl', description: 'Online payment URL', required: false },
+      { name: 'agentName', description: 'Collection agent name', required: true }
+    ],
     isActive: true,
     createdAt: '2024-02-01T10:00:00Z',
     updatedAt: '2024-10-20T16:45:00Z'
@@ -125,10 +150,18 @@ Senior Collection Agent
   {
     id: 'template_3',
     name: 'SMS Payment Reminder',
+    type: 'reminder',
+    locale: 'en-GB',
+    version: 1,
     channel: 'sms',
     subject: '',
     content: 'URGENT: Payment of {amount} {currency} is overdue. Contact us on {contactPhone} to avoid further action. Ref: {caseReference}',
-    variables: ['amount', 'currency', 'contactPhone', 'caseReference'],
+    variables: [
+      { name: 'amount', description: 'Outstanding amount', required: true },
+      { name: 'currency', description: 'Currency code', required: true },
+      { name: 'contactPhone', description: 'Contact phone number', required: true },
+      { name: 'caseReference', description: 'Case reference number', required: true }
+    ],
     isActive: true,
     createdAt: '2024-03-10T11:30:00Z',
     updatedAt: '2024-09-15T13:20:00Z'
@@ -140,7 +173,7 @@ interface TemplateFormData {
   channel: 'email' | 'sms' | 'letter' | 'phone';
   subject: string;
   content: string;
-  variables: string[];
+  variables: TemplateVariable[];
   isActive: boolean;
 }
 

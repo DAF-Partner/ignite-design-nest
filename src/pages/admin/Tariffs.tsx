@@ -54,7 +54,7 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
 import { Money } from '@/components/ui/money';
 
-import type { Tariff } from '@/types';
+import type { Tariff, TariffTier } from '@/types';
 
 const mockTariffs: Tariff[] = [
   {
@@ -67,6 +67,7 @@ const mockTariffs: Tariff[] = [
     minimumFee: 50.00,
     maximumFee: 5000.00,
     currency: 'GBP',
+    clauseText: 'Collection fee of 25% of the outstanding amount, minimum £50, maximum £5000.',
     isActive: true,
     createdAt: '2024-01-15T09:00:00Z',
     updatedAt: '2024-11-15T14:30:00Z'
@@ -85,6 +86,7 @@ const mockTariffs: Tariff[] = [
     minimumFee: 150.00,
     maximumFee: 10000.00,
     currency: 'GBP',
+    clauseText: 'Tiered collection fee: 30% for first £1000, 25% for £1000-£5000, 20% above £5000. Fixed fee £100.',
     isActive: true,
     createdAt: '2024-02-01T10:00:00Z',
     updatedAt: '2024-10-20T16:45:00Z'
@@ -99,6 +101,7 @@ const mockTariffs: Tariff[] = [
     minimumFee: 500.00,
     maximumFee: 500.00,
     currency: 'GBP',
+    clauseText: 'Fixed collection fee of £500 regardless of claim amount.',
     isActive: false,
     createdAt: '2024-03-10T11:30:00Z',
     updatedAt: '2024-09-15T13:20:00Z'
@@ -115,11 +118,7 @@ interface TariffFormData {
   maximumFee: number;
   currency: string;
   isActive: boolean;
-  tiers?: Array<{
-    minAmount: number;
-    maxAmount: number | null;
-    percentage: number;
-  }>;
+  tiers?: TariffTier[];
 }
 
 export default function Tariffs() {
