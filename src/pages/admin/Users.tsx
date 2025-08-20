@@ -145,7 +145,7 @@ export default function Users() {
 
     if (statusFilter !== 'all') {
       const isActive = statusFilter === 'active';
-      filtered = filtered.filter(user => (user as any).isActive === isActive);
+      filtered = filtered.filter(user => user.isActive === isActive);
     }
 
     if (searchQuery) {
@@ -178,13 +178,13 @@ export default function Users() {
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
     setIsEditing(true);
-    setFormData({
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      clientId: user.clientId || '',
-      isActive: (user as any).isActive || true
-    });
+      setFormData({
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        clientId: user.clientId || '',
+        isActive: user.isActive || true
+      });
     setShowUserDialog(true);
   };
 
@@ -251,7 +251,7 @@ export default function Users() {
   };
 
   const handleToggleUserStatus = (user: User) => {
-    const newStatus = !(user as any).isActive;
+    const newStatus = !user.isActive;
     setUsers(users.map(u => 
       u.id === user.id 
         ? { ...u, isActive: newStatus }
@@ -274,7 +274,7 @@ export default function Users() {
   // Calculate statistics
   const stats = {
     total: users.length,
-    active: users.filter(u => (u as any).isActive).length,
+    active: users.filter(u => u.isActive).length,
     clients: users.filter(u => u.role === 'CLIENT').length,
     agents: users.filter(u => u.role === 'AGENT').length,
     admins: users.filter(u => u.role === 'ADMIN').length
@@ -299,7 +299,7 @@ export default function Users() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        <Card className="card-professional">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg">
@@ -313,11 +313,11 @@ export default function Users() {
           </CardContent>
         </Card>
 
-        <Card className="card-professional">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-success/10 rounded-lg">
-                <UserCheck className="h-5 w-5 text-success" />
+              <div className="p-2 bg-emerald-500/10 rounded-lg">
+                <UserCheck className="h-5 w-5 text-emerald-500" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Active</p>
@@ -327,7 +327,7 @@ export default function Users() {
           </CardContent>
         </Card>
 
-        <Card className="card-professional">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-500/10 rounded-lg">
@@ -341,7 +341,7 @@ export default function Users() {
           </CardContent>
         </Card>
 
-        <Card className="card-professional">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-500/10 rounded-lg">
@@ -355,7 +355,7 @@ export default function Users() {
           </CardContent>
         </Card>
 
-        <Card className="card-professional">
+        <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-red-500/10 rounded-lg">
@@ -371,7 +371,7 @@ export default function Users() {
       </div>
 
       {/* Filters and Search */}
-      <Card className="card-professional">
+      <Card>
         <CardContent className="p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div className="flex-1">
@@ -391,7 +391,7 @@ export default function Users() {
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Role" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background border shadow-lg">
                   <SelectItem value="all">All Roles</SelectItem>
                   <SelectItem value="CLIENT">Client</SelectItem>
                   <SelectItem value="AGENT">Agent</SelectItem>
@@ -404,7 +404,7 @@ export default function Users() {
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-background border shadow-lg">
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
@@ -416,7 +416,7 @@ export default function Users() {
       </Card>
 
       {/* Users Table */}
-      <Card className="card-professional">
+      <Card>
         <CardHeader>
           <CardTitle>Users ({filteredUsers.length})</CardTitle>
         </CardHeader>
@@ -458,17 +458,22 @@ export default function Users() {
                     </TableCell>
                     <TableCell>
                       <Badge 
-                        variant="outline" 
-                        className={`border-${roleConfig[user.role].color}-500 text-${roleConfig[user.role].color}-500`}
+                        variant="outline"
+                        className={`
+                          ${user.role === 'CLIENT' ? 'border-blue-500 text-blue-500' : ''}
+                          ${user.role === 'AGENT' ? 'border-green-500 text-green-500' : ''}
+                          ${user.role === 'ADMIN' ? 'border-red-500 text-red-500' : ''}
+                          ${user.role === 'DPO' ? 'border-purple-500 text-purple-500' : ''}
+                        `}
                       >
                         {roleConfig[user.role].label}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className={`h-2 w-2 rounded-full ${(user as any).isActive ? 'bg-success' : 'bg-destructive'}`} />
+                        <div className={`h-2 w-2 rounded-full ${user.isActive ? 'bg-emerald-500' : 'bg-red-500'}`} />
                         <span className="text-sm">
-                          {(user as any).isActive ? 'Active' : 'Inactive'}
+                          {user.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </div>
                     </TableCell>
@@ -493,7 +498,7 @@ export default function Users() {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="bg-background border shadow-lg">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem onClick={() => handleEditUser(user)}>
                             <Edit className="h-4 w-4 mr-2" />
@@ -505,7 +510,7 @@ export default function Users() {
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => handleToggleUserStatus(user)}>
-                            {(user as any).isActive ? (
+                            {user.isActive ? (
                               <>
                                 <Lock className="h-4 w-4 mr-2" />
                                 Deactivate

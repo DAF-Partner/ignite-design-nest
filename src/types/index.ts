@@ -21,7 +21,9 @@ export interface User {
   name: string;
   role: UserRole;
   clientId?: string; // Only for CLIENT role
+  isActive?: boolean;
   createdAt: string;
+  updatedAt?: string;
   lastLoginAt?: string;
 }
 
