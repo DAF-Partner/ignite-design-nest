@@ -34,18 +34,28 @@ export interface AuthTokens {
 
 export interface Case {
   id: string;
+  reference: string;
   clientId: string;
   clientName: string;
   assignedAgentId?: string;
   assignedAgentName?: string;
-  debtorName: string;
-  debtorEmail?: string;
-  debtorPhone?: string;
+  debtor: {
+    name: string;
+    email: string;
+    phone?: string;
+    address: {
+      street?: string;
+      city: string;
+      postalCode?: string;
+      country: string;
+    };
+  };
   amount: number;
   currency: string;
-  originalAmount: number;
+  originalAmount?: number;
   status: CaseStatus;
   description?: string;
+  originalCreditor?: string;
   createdAt: string;
   updatedAt: string;
   dueDate?: string;
@@ -86,16 +96,16 @@ export interface Document {
   id: string;
   caseId: string;
   filename: string;
-  originalName: string;
+  originalName?: string;
   category: DocumentCategory;
-  size: number;
-  mimeType: string;
-  uploadedBy: string;
-  uploadedByName: string;
-  uploadedAt: string;
-  retentionDate: string;
+  size?: number;
+  mimeType?: string;
+  uploadedBy?: string;
+  uploadedByName?: string;
+  createdAt: string;
+  retentionDate?: string;
   version: number;
-  isLatest: boolean;
+  isLatest?: boolean;
   downloadUrl?: string;
 }
 
@@ -157,11 +167,40 @@ export interface CaseEvent {
   id: string;
   caseId: string;
   type: 'status_change' | 'document_upload' | 'approval_request' | 'message_sent' | 'assignment_change';
+  title: string;
   description: string;
-  performedBy: string;
-  performedByName: string;
   createdAt: string;
   metadata?: Record<string, any>;
+}
+
+export interface Message {
+  id: string;
+  caseId: string;
+  direction: 'inbound' | 'outbound';
+  channel: 'email' | 'sms' | 'letter' | 'phone';
+  content: string;
+  templateId?: string;
+  createdAt: string;
+}
+
+export interface CreateCaseRequest {
+  debtor: {
+    name: string;
+    email: string;
+    phone?: string;
+    address: {
+      street?: string;
+      city: string;
+      postalCode?: string;
+      country: string;
+    };
+  };
+  amount: number;
+  currency: string;
+  description?: string;
+  reference: string;
+  originalCreditor?: string;
+  clientId: string;
 }
 
 export interface Tariff {
@@ -200,14 +239,9 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> {
   data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
+  total: number;
+  hasNext: boolean;
+  nextCursor?: string;
 }
 
 export interface ProblemDetails {

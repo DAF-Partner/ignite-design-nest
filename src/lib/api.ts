@@ -1,7 +1,7 @@
 // Professional API Layer for B2B Debt Collection Platform
 // Centralized API client with JWT authentication and error handling
 
-import { ApiResponse, PaginatedResponse, ProblemDetails, AuthTokens } from '@/types';
+import { ApiResponse, PaginatedResponse, ProblemDetails, AuthTokens, Case, CreateCaseRequest, CaseStatus } from '@/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 const USE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false'; // Default to mock mode
@@ -109,6 +109,50 @@ class ApiClient {
     return response;
   }
 
+  // Cases API
+  async getCases(params?: {
+    status?: string;
+    q?: string;
+    limit?: number;
+    cursor?: string;
+  }): Promise<PaginatedResponse<Case>> {
+    if (USE_MOCK) {
+      return mockGetCases(params);
+    }
+    
+    const searchParams = new URLSearchParams();
+    if (params?.status) searchParams.set('status', params.status);
+    if (params?.q) searchParams.set('q', params.q);
+    if (params?.limit) searchParams.set('limit', params.limit.toString());
+    if (params?.cursor) searchParams.set('cursor', params.cursor);
+    
+    return this.get<PaginatedResponse<Case>>(`/cases?${searchParams.toString()}`);
+  }
+
+  async createCase(data: CreateCaseRequest): Promise<Case> {
+    if (USE_MOCK) {
+      return mockCreateCase(data);
+    }
+    
+    return this.post<Case>('/cases', data);
+  }
+
+  async getCase(id: string): Promise<Case> {
+    if (USE_MOCK) {
+      return mockGetCase(id);
+    }
+    
+    return this.get<Case>(`/cases/${id}`);
+  }
+
+  async updateCase(id: string, data: Partial<Case>): Promise<Case> {
+    if (USE_MOCK) {
+      return mockUpdateCase(id, data);
+    }
+    
+    return this.patch<Case>(`/cases/${id}`, data);
+  }
+
   // Generic CRUD operations
   async get<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint);
@@ -175,6 +219,101 @@ export class ApiError extends Error {
   get errors() {
     return this.problem.errors;
   }
+}
+
+// Mock implementation for cases
+async function mockGetCases(params?: any): Promise<PaginatedResponse<Case>> {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  const { mockCases } = await import('@/lib/mockData');
+  let cases = [...mockCases];
+  
+  // Apply filtering
+  if (params?.status && params.status !== 'all') {
+    cases = cases.filter(c => c.status === params.status);
+  }
+  
+  if (params?.q) {
+    const query = params.q.toLowerCase();
+    cases = cases.filter(c => 
+      c.debtor.name.toLowerCase().includes(query) ||
+      c.debtor.email.toLowerCase().includes(query) ||
+      c.reference.toLowerCase().includes(query)
+    );
+  }
+  
+  const limit = params?.limit || 20;
+  const total = cases.length;
+  const data = cases.slice(0, limit);
+  
+  return {
+    data,
+    total,
+    hasNext: total > limit,
+    nextCursor: total > limit ? 'next_page' : undefined,
+  };
+}
+
+async function mockCreateCase(data: CreateCaseRequest): Promise<Case> {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  const newCase: Case = {
+    id: 'case_' + Date.now(),
+    reference: data.reference,
+    clientId: data.clientId,
+    clientName: 'Mock Client', // Would be resolved from clientId
+    assignedAgentId: undefined,
+    assignedAgentName: undefined,
+    debtor: data.debtor,
+    amount: data.amount,
+    currency: data.currency,
+    status: 'new' as CaseStatus,
+    description: data.description,
+    originalCreditor: data.originalCreditor,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  
+  return newCase;
+}
+
+async function mockGetCase(id: string): Promise<Case> {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
+  const { mockCases } = await import('@/lib/mockData');
+  const case_ = mockCases.find(c => c.id === id);
+  
+  if (!case_) {
+    throw new ApiError({
+      title: 'Case Not Found',
+      detail: `Case with ID ${id} not found`,
+      status: 404,
+    });
+  }
+  
+  return case_;
+}
+
+async function mockUpdateCase(id: string, data: Partial<Case>): Promise<Case> {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  const { mockCases } = await import('@/lib/mockData');
+  const case_ = mockCases.find(c => c.id === id);
+  
+  if (!case_) {
+    throw new ApiError({
+      title: 'Case Not Found',
+      detail: `Case with ID ${id} not found`,
+      status: 404,
+    });
+  }
+  
+  return {
+    ...case_,
+    ...data,
+    id: case_.id, // Ensure ID doesn't change
+    updatedAt: new Date().toISOString(),
+  };
 }
 
 // Mock implementation for development

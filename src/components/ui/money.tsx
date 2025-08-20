@@ -5,7 +5,8 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface MoneyProps {
-  amount: number;
+  value?: number;
+  amount?: number;
   currency: string;
   className?: string;
   showSign?: boolean;
@@ -29,6 +30,7 @@ const variantClasses = {
 };
 
 export function Money({
+  value,
   amount,
   currency,
   className,
@@ -37,6 +39,7 @@ export function Money({
   size = 'default',
   variant = 'default',
 }: MoneyProps) {
+  const finalAmount = value ?? amount ?? 0;
   const formatCurrency = (value: number, currencyCode: string) => {
     // Handle different currency formats
     const formatOptions: Intl.NumberFormatOptions = {
@@ -55,9 +58,9 @@ export function Money({
     }
   };
 
-  const formattedAmount = formatCurrency(Math.abs(amount), currency);
-  const isNegative = amount < 0;
-  const isPositive = amount > 0;
+  const formattedAmount = formatCurrency(Math.abs(finalAmount), currency);
+  const isNegative = finalAmount < 0;
+  const isPositive = finalAmount > 0;
   
   // Determine the sign to show
   let sign = '';

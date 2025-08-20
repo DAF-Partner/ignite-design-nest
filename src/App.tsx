@@ -8,6 +8,9 @@ import { RoleGuard } from "@/components/auth/RoleGuard";
 import AppLayout from "@/components/layout/AppLayout";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
+import Cases from "@/pages/Cases";
+import CaseNew from "@/pages/CaseNew";
+import CaseDetail from "@/pages/CaseDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,10 +38,17 @@ const App = () => (
               {/* Case Management */}
               <Route path="cases" element={
                 <RoleGuard allowedRoles={['CLIENT', 'AGENT', 'ADMIN', 'DPO']}>
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">Case Management</h2>
-                    <p className="text-muted-foreground">Case list and management features coming soon...</p>
-                  </div>
+                  <Cases />
+                </RoleGuard>
+              } />
+              <Route path="cases/new" element={
+                <RoleGuard allowedRoles={['CLIENT', 'ADMIN']}>
+                  <CaseNew />
+                </RoleGuard>
+              } />
+              <Route path="cases/:id" element={
+                <RoleGuard allowedRoles={['CLIENT', 'AGENT', 'ADMIN', 'DPO']}>
+                  <CaseDetail />
                 </RoleGuard>
               } />
               
