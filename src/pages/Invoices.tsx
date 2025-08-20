@@ -373,9 +373,7 @@ export default function Invoices() {
                         </div>
                         
                         <div className="flex items-center gap-2">
-                          <StatusBadge 
-                            status={invoice.status} 
-                          />
+                          <StatusBadge status={invoice.status} />
                         </div>
                       </div>
                       
@@ -473,9 +471,7 @@ export default function Invoices() {
                     <h3 className="text-lg font-semibold">Invoice {selectedInvoice.invoiceNumber}</h3>
                     <p className="text-muted-foreground">{selectedInvoice.caseName}</p>
                   </div>
-                  <StatusBadge 
-                    status={selectedInvoice.status} 
-                  />
+                  <StatusBadge status={selectedInvoice.status} />
                 </div>
                 
                 <Separator />

@@ -369,9 +369,7 @@ export default function Approvals() {
                         </div>
                         
                         <div className="flex items-center gap-2">
-                          <StatusBadge 
-                            status={approval.state} 
-                          />
+                          <StatusBadge status={approval.state} />
                         </div>
                       </div>
                       
