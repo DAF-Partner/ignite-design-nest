@@ -11,6 +11,8 @@ import Dashboard from "@/pages/Dashboard";
 import Cases from "@/pages/Cases";
 import CaseNew from "@/pages/CaseNew";
 import CaseDetail from "@/pages/CaseDetail";
+import Approvals from "@/pages/Approvals";
+import Invoices from "@/pages/Invoices";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -55,20 +57,14 @@ const App = () => (
               {/* Approvals */}
               <Route path="approvals" element={
                 <RoleGuard allowedRoles={['ADMIN', 'CLIENT']}>
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">Approvals</h2>
-                    <p className="text-muted-foreground">Approval management system coming soon...</p>
-                  </div>
+                  <Approvals />
                 </RoleGuard>
               } />
               
               {/* Invoices */}
               <Route path="invoices" element={
                 <RoleGuard allowedRoles={['CLIENT', 'ADMIN']}>
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">Invoices</h2>
-                    <p className="text-muted-foreground">Invoice management system coming soon...</p>
-                  </div>
+                  <Invoices />
                 </RoleGuard>
               } />
               
