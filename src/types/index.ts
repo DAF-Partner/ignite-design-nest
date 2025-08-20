@@ -5,7 +5,7 @@ export type UserRole = 'CLIENT' | 'AGENT' | 'ADMIN' | 'DPO';
 
 export type CaseStatus = 'new' | 'in_progress' | 'awaiting_approval' | 'legal_stage' | 'closed';
 
-export type ApprovalType = 'expense' | 'legal_escalation' | 'retrieval';
+export type ApprovalType = 'expense' | 'legal_escalation' | 'retrieval' | 'settlement_approval' | 'payment_plan' | 'write_off';
 
 export type ApprovalState = 'pending' | 'approved' | 'rejected';
 
@@ -21,7 +21,10 @@ export interface User {
   name: string;
   role: UserRole;
   clientId?: string; // Only for CLIENT role
+  department?: string;
+  phone?: string;
   isActive?: boolean;
+  permissions?: string[];
   createdAt: string;
   updatedAt?: string;
   lastLoginAt?: string;
