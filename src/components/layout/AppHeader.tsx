@@ -25,6 +25,8 @@ const pageNames: Record<string, string> = {
   '/approvals': 'Approvals',
   '/invoices': 'Invoices',
   '/gdpr': 'GDPR Requests',
+  '/profile': 'Profile',
+  '/settings': 'Settings',
   '/admin/users': 'User Management',
   '/admin/tariffs': 'Tariff Management',
   '/admin/templates': 'Message Templates',

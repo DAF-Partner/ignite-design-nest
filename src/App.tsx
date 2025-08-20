@@ -15,6 +15,8 @@ import Approvals from "@/pages/Approvals";
 import Invoices from "@/pages/Invoices";
 import GdprRequests from "@/pages/GdprRequests";
 import NotFound from "./pages/NotFound";
+import Profile from "@/pages/Profile";
+import Settings from "@/pages/Settings";
 import Users from "@/pages/admin/Users";
 import Tariffs from "@/pages/admin/Tariffs";
 import Templates from "@/pages/admin/Templates";
@@ -77,6 +79,19 @@ const App = () => (
               <Route path="gdpr" element={
                 <RoleGuard allowedRoles={['DPO', 'ADMIN']}>
                   <GdprRequests />
+                </RoleGuard>
+              } />
+              
+              {/* Profile & Settings */}
+              <Route path="profile" element={
+                <RoleGuard allowedRoles={['CLIENT', 'AGENT', 'ADMIN', 'DPO']}>
+                  <Profile />
+                </RoleGuard>
+              } />
+              
+              <Route path="settings" element={
+                <RoleGuard allowedRoles={['CLIENT', 'AGENT', 'ADMIN', 'DPO']}>
+                  <Settings />
                 </RoleGuard>
               } />
               

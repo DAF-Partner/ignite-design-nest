@@ -16,6 +16,7 @@ import {
   UserCheck,
   Archive,
   MessageSquare,
+  User,
 } from 'lucide-react';
 
 import {
@@ -63,6 +64,21 @@ const navigationItems = [
     url: '/gdpr',
     icon: Shield,
     roles: ['CLIENT', 'DPO', 'ADMIN'],
+  },
+];
+
+const userItems = [
+  {
+    title: 'Profile',
+    url: '/profile',
+    icon: User,
+    roles: ['CLIENT', 'AGENT', 'ADMIN', 'DPO'],
+  },
+  {
+    title: 'Settings',
+    url: '/settings',
+    icon: Settings,
+    roles: ['CLIENT', 'AGENT', 'ADMIN', 'DPO'],
   },
 ];
 
@@ -133,6 +149,10 @@ export function AppSidebar() {
   );
 
   const filteredDpoItems = dpoItems.filter(item =>
+    item.roles.some(role => hasRole(role))
+  );
+
+  const filteredUserItems = userItems.filter(item =>
     item.roles.some(role => hasRole(role))
   );
 
@@ -226,6 +246,27 @@ export function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {filteredDpoItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavClasses(item.url)}>
+                        <item.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* User Section */}
+        {filteredUserItems.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Account</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {filteredUserItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavClasses(item.url)}>

@@ -19,7 +19,7 @@ interface Action {
     outcome?: string;
     next_action?: string;
     duration_minutes?: number;
-  };
+  } | null;
 }
 
 interface ActionHistoryProps {
@@ -103,7 +103,12 @@ export function ActionHistory({ caseId, refreshTrigger }: ActionHistoryProps) {
 
       if (error) throw error;
 
-      setActions(data || []);
+      setActions((data || []).map(action => ({
+        ...action,
+        metadata: action.metadata && typeof action.metadata === 'object' 
+          ? action.metadata as Action['metadata'] 
+          : null
+      })));
     } catch (error) {
       console.error('Error fetching actions:', error);
       toast.error('Failed to load action history');
