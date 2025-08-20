@@ -13,6 +13,7 @@ import CaseNew from "@/pages/CaseNew";
 import CaseDetail from "@/pages/CaseDetail";
 import Approvals from "@/pages/Approvals";
 import Invoices from "@/pages/Invoices";
+import GdprRequests from "@/pages/GdprRequests";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -68,13 +69,10 @@ const App = () => (
                 </RoleGuard>
               } />
               
-              {/* GDPR */}
+              {/* GDPR Requests */}
               <Route path="gdpr" element={
-                <RoleGuard allowedRoles={['CLIENT', 'DPO', 'ADMIN']}>
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">GDPR Requests</h2>
-                    <p className="text-muted-foreground">GDPR compliance tools coming soon...</p>
-                  </div>
+                <RoleGuard allowedRoles={['DPO', 'ADMIN']}>
+                  <GdprRequests />
                 </RoleGuard>
               } />
               

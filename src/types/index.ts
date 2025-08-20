@@ -11,7 +11,7 @@ export type ApprovalState = 'pending' | 'approved' | 'rejected';
 
 export type DocumentCategory = 'evidence' | 'correspondence' | 'invoice' | 'other';
 
-export type GdprRequestType = 'SAR' | 'ERASURE';
+export type GdprRequestType = 'SAR' | 'ERASURE' | 'RECTIFICATION' | 'PORTABILITY' | 'OBJECTION';
 
 export type NotificationType = 'case_update' | 'approval_required' | 'document_uploaded' | 'payment_due';
 
@@ -139,7 +139,7 @@ export interface InvoiceItem {
 export interface GdprRequest {
   id: string;
   type: GdprRequestType;
-  status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  status: 'pending' | 'processing' | 'completed' | 'cancelled' | 'rejected';
   requestedBy: string;
   requestedByName: string;
   dataSubject: string;
