@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, FileText, Clock, MessageSquare, CheckCircle, 
   AlertCircle, Upload, Download, Eye, MoreHorizontal,
-  User, Calendar, Euro, Building, Phone, Mail, MapPin
+  User, Calendar, Euro, Building, Phone, Mail, MapPin, Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +18,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Money } from '@/components/ui/money';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { ActionLogger } from '@/components/case/ActionLogger';
+import { ActionHistory } from '@/components/case/ActionHistory';
 import { mockCases, mockDocuments, mockEvents, mockMessages } from '@/lib/mockData';
 import { Case, Document, CaseEvent, Message } from '@/types';
 import { cn } from '@/lib/utils';
@@ -27,6 +29,7 @@ export default function CaseDetail() {
   const navigate = useNavigate();
   const { user, hasRole } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [actionRefreshTrigger, setActionRefreshTrigger] = useState(0);
 
   // Find the case
   const case_ = useMemo(() => {
@@ -71,6 +74,13 @@ export default function CaseDetail() {
   const canViewCase = hasRole(['ADMIN', 'DPO']) || 
     (hasRole('CLIENT') && case_.clientId === user?.clientId) ||
     (hasRole('AGENT') && case_.assignedAgentId === user?.id);
+
+  // Check if user is the assigned agent
+  const isAssignedAgent = hasRole('AGENT') && case_.assignedAgentId === user?.id;
+
+  const handleActionLogged = () => {
+    setActionRefreshTrigger(prev => prev + 1);
+  };
 
   if (!canViewCase) {
     return (
@@ -229,9 +239,10 @@ export default function CaseDetail() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="actions">Actions</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="messages">Messages</TabsTrigger>
           <TabsTrigger value="approvals">Approvals</TabsTrigger>
@@ -418,6 +429,16 @@ export default function CaseDetail() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Actions Tab */}
+        <TabsContent value="actions" className="space-y-4">
+          {isAssignedAgent && (
+            <div className="flex justify-end">
+              <ActionLogger caseId={id!} onActionLogged={handleActionLogged} />
+            </div>
+          )}
+          <ActionHistory caseId={id!} refreshTrigger={actionRefreshTrigger} />
         </TabsContent>
 
         {/* Documents Tab */}
