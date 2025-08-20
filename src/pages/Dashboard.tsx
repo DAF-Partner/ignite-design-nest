@@ -299,7 +299,7 @@ export default function Dashboard() {
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="font-medium truncate">{case_.debtorName}</p>
+                      <p className="font-medium truncate">{case_.debtor.name}</p>
                       <StatusBadge status={case_.status} size="sm" />
                     </div>
                     <p className="text-sm text-muted-foreground">
