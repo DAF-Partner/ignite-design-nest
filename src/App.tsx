@@ -15,6 +15,10 @@ import Approvals from "@/pages/Approvals";
 import Invoices from "@/pages/Invoices";
 import GdprRequests from "@/pages/GdprRequests";
 import NotFound from "./pages/NotFound";
+import Users from "@/pages/admin/Users";
+import Tariffs from "@/pages/admin/Tariffs";
+import Templates from "@/pages/admin/Templates";
+import RetentionPolicy from "@/pages/admin/RetentionPolicy";
 
 const queryClient = new QueryClient();
 
@@ -79,37 +83,25 @@ const App = () => (
               {/* Admin Routes */}
               <Route path="admin/users" element={
                 <RoleGuard allowedRoles={['ADMIN']}>
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">User Management</h2>
-                    <p className="text-muted-foreground">User administration panel coming soon...</p>
-                  </div>
+                  <Users />
                 </RoleGuard>
               } />
               
               <Route path="admin/tariffs" element={
                 <RoleGuard allowedRoles={['ADMIN']}>
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">Tariff Management</h2>
-                    <p className="text-muted-foreground">Tariff configuration system coming soon...</p>
-                  </div>
+                  <Tariffs />
                 </RoleGuard>
               } />
               
               <Route path="admin/templates" element={
                 <RoleGuard allowedRoles={['ADMIN']}>
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">Message Templates</h2>
-                    <p className="text-muted-foreground">Template management system coming soon...</p>
-                  </div>
+                  <Templates />
                 </RoleGuard>
               } />
               
               <Route path="admin/retention" element={
                 <RoleGuard allowedRoles={['ADMIN']}>
-                  <div className="p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-4">Retention Policy</h2>
-                    <p className="text-muted-foreground">Data retention management coming soon...</p>
-                  </div>
+                  <RetentionPolicy />
                 </RoleGuard>
               } />
               
