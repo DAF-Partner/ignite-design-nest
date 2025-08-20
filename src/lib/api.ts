@@ -321,11 +321,11 @@ async function mockLogin(email: string, password: string): Promise<AuthTokens> {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // Mock user roles based on email
+  // Determine role from email
   let role: 'CLIENT' | 'AGENT' | 'ADMIN' | 'DPO' = 'CLIENT';
-  if (email.includes('agent')) role = 'AGENT';
-  if (email.includes('admin')) role = 'ADMIN';  
-  if (email.includes('dpo')) role = 'DPO';
+  if (email.toLowerCase().includes('agent')) role = 'AGENT';
+  if (email.toLowerCase().includes('admin')) role = 'ADMIN';
+  if (email.toLowerCase().includes('dpo')) role = 'DPO';
 
   if (password !== 'password123') {
     throw new ApiError({
@@ -335,18 +335,32 @@ async function mockLogin(email: string, password: string): Promise<AuthTokens> {
     });
   }
 
+  // Align returned user with our mock dataset so role-scoped filters work
+  const { mockUsers } = await import('@/lib/mockData');
+  const roleUserIdMap: Record<typeof role, string> = {
+    CLIENT: 'client_1',
+    AGENT: 'agent_1',
+    ADMIN: 'admin_1',
+    DPO: 'dpo_1',
+  };
+  const base = mockUsers.find(u => u.id === roleUserIdMap[role]);
+
+  const user = base
+    ? { ...base, email } // keep provided email for demo, preserve ids/clientId/role
+    : {
+        id: 'user_' + Date.now(),
+        email,
+        name: email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        role,
+        clientId: role === 'CLIENT' ? 'client_1' : undefined,
+        createdAt: new Date().toISOString(),
+      };
+
   return {
     access_token: 'mock_jwt_token_' + Date.now(),
     refresh_token: 'mock_refresh_token_' + Date.now(),
     expires_in: 3600,
-    user: {
-      id: 'user_' + Date.now(),
-      email,
-      name: email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-      role,
-      clientId: role === 'CLIENT' ? 'client_1' : undefined,
-      createdAt: new Date().toISOString(),
-    },
+    user,
   };
 }
 
