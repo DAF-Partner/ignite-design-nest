@@ -16,28 +16,30 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { NotificationsBell } from './NotificationsBell';
-
-const pageNames: Record<string, string> = {
-  '/dashboard': 'Dashboard',
-  '/cases': 'Case Management',
-  '/cases/new': 'New Case',
-  '/approvals': 'Approvals',
-  '/invoices': 'Invoices',
-  '/gdpr': 'GDPR Requests',
-  '/profile': 'Profile',
-  '/settings': 'Settings',
-  '/admin/users': 'User Management',
-  '/admin/tariffs': 'Tariff Management',
-  '/admin/templates': 'Message Templates',
-  '/admin/retention': 'Retention Policy',
-  '/dpo': 'Data Protection Office',
-};
 
 export function AppHeader() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
+
+  const pageNames: Record<string, string> = {
+    '/dashboard': t('dashboard'),
+    '/cases': t('caseManagement'),
+    '/cases/new': t('newCase'),
+    '/approvals': t('approvals'),
+    '/invoices': t('invoices'),
+    '/gdpr': t('gdprRequests'),
+    '/profile': t('profile'),
+    '/settings': t('settings'),
+    '/admin/users': t('userManagement'),
+    '/admin/tariffs': t('tariffManagement'),
+    '/admin/templates': t('messageTemplates'),
+    '/admin/retention': t('retentionPolicy'),
+    '/dpo': t('dataProtectionOffice'),
+  };
 
   const getPageName = () => {
     // Check for exact matches first
@@ -127,14 +129,14 @@ export function AppHeader() {
                 className="cursor-pointer"
               >
                 <User className="mr-2 h-4 w-4" />
-                Profile
+                {t('profile')}
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => navigate('/settings')}
                 className="cursor-pointer"
               >
                 <Settings className="mr-2 h-4 w-4" />
-                Settings
+                {t('settings')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
@@ -142,7 +144,7 @@ export function AppHeader() {
                 className="cursor-pointer text-destructive focus:text-destructive"
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                Logout
+                {t('logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

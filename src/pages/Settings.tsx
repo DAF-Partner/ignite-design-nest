@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,6 +61,7 @@ export default function Settings() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { currentLanguage, setLanguage, getSupportedLanguages } = useLanguage();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('notifications');
 
   const notificationForm = useForm<NotificationSettings>({
@@ -105,13 +107,13 @@ export default function Settings() {
       console.log('Notification settings:', data);
       
       toast({
-        title: 'Settings updated',
-        description: 'Your notification preferences have been saved.',
+        title: t('settingsUpdated'),
+        description: t('notificationSettingsSaved'),
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update settings. Please try again.',
+        title: t('error'),
+        description: t('updateSettingsError'),
         variant: 'destructive',
       });
     }
@@ -123,15 +125,15 @@ export default function Settings() {
       console.log('Password change:', data);
       
       toast({
-        title: 'Password updated',
-        description: 'Your password has been successfully changed.',
+        title: t('passwordUpdated'),
+        description: t('passwordChangedSuccess'),
       });
       
       passwordForm.reset();
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update password. Please try again.',
+        title: t('error'),
+        description: t('updatePasswordError'),
         variant: 'destructive',
       });
     }
@@ -146,13 +148,13 @@ export default function Settings() {
       console.log('Preferences:', data);
       
       toast({
-        title: 'Preferences updated',
-        description: 'Your preferences have been saved.',
+        title: t('preferencesUpdated'),
+        description: t('preferencesSaved'),
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update preferences. Please try again.',
+        title: t('error'),
+        description: t('updatePreferencesError'),
         variant: 'destructive',
       });
     }
@@ -178,10 +180,10 @@ export default function Settings() {
   };
 
   const tabs = [
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'security', label: 'Security', icon: Lock },
-    { id: 'preferences', label: 'Preferences', icon: Palette },
-    { id: 'privacy', label: 'Privacy', icon: Shield },
+    { id: 'notifications', label: t('notifications'), icon: Bell },
+    { id: 'security', label: t('security'), icon: Lock },
+    { id: 'preferences', label: t('preferences'), icon: Palette },
+    { id: 'privacy', label: t('privacy'), icon: Shield },
   ];
 
   return (
@@ -191,10 +193,10 @@ export default function Settings() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
             <SettingsIcon className="h-8 w-8" />
-            Settings
+            {t('settingsTitle')}
           </h1>
           <p className="text-muted-foreground mt-2">
-            Manage your account settings and preferences
+            {t('settingsDescription')}
           </p>
         </div>
 
@@ -228,17 +230,17 @@ export default function Settings() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Bell className="h-5 w-5" />
-                    Notification Settings
+                    {t('notificationSettings')}
                   </CardTitle>
                   <CardDescription>
-                    Configure how you want to receive notifications
+                    {t('notificationDescription')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Form {...notificationForm}>
                     <form onSubmit={notificationForm.handleSubmit(onNotificationSubmit)} className="space-y-6">
                       <div className="space-y-4">
-                        <h4 className="font-medium">Communication Channels</h4>
+                        <h4 className="font-medium">{t('communicationChannels')}</h4>
                         
                         <FormField
                           control={notificationForm.control}
@@ -248,10 +250,10 @@ export default function Settings() {
                               <div className="space-y-0.5">
                                 <FormLabel className="flex items-center gap-2">
                                   <Mail className="h-4 w-4" />
-                                  Email Notifications
+                                  {t('emailNotifications')}
                                 </FormLabel>
                                 <FormDescription>
-                                  Receive notifications via email
+                                  {t('emailNotificationDesc')}
                                 </FormDescription>
                               </div>
                               <FormControl>
@@ -267,13 +269,13 @@ export default function Settings() {
                           render={({ field }) => (
                             <FormItem className="flex items-center justify-between">
                               <div className="space-y-0.5">
-                                <FormLabel className="flex items-center gap-2">
-                                  <Smartphone className="h-4 w-4" />
-                                  SMS Notifications
-                                </FormLabel>
-                                <FormDescription>
-                                  Receive urgent notifications via SMS
-                                </FormDescription>
+                                 <FormLabel className="flex items-center gap-2">
+                                   <Smartphone className="h-4 w-4" />
+                                   {t('smsNotifications')}
+                                 </FormLabel>
+                                 <FormDescription>
+                                   {t('smsNotificationDesc')}
+                                 </FormDescription>
                               </div>
                               <FormControl>
                                 <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -438,10 +440,10 @@ export default function Settings() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Globe className="h-5 w-5" />
-                    Preferences
+                    {t('preferencesTitle')}
                   </CardTitle>
                   <CardDescription>
-                    Customize your application experience
+                    {t('preferencesDesc')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -453,13 +455,13 @@ export default function Settings() {
                           name="language"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Language</FormLabel>
+                               <FormLabel>{t('language')}</FormLabel>
                                <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select language" />
-                                  </SelectTrigger>
-                                </FormControl>
+                                 <FormControl>
+                                   <SelectTrigger>
+                                     <SelectValue placeholder={t('selectLanguage')} />
+                                   </SelectTrigger>
+                                 </FormControl>
                                 <SelectContent>
                                   {getSupportedLanguages().map((lang) => (
                                     <SelectItem key={lang.code} value={lang.code}>
@@ -545,7 +547,7 @@ export default function Settings() {
                         />
                       </div>
 
-                      <Button type="submit">Save Preferences</Button>
+                      <Button type="submit">{t('savePreferences')}</Button>
                     </form>
                   </Form>
                 </CardContent>

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { TranslationProvider } from "@/contexts/TranslationContext";
 import { RoleGuard } from "@/components/auth/RoleGuard";
 import AppLayout from "@/components/layout/AppLayout";
 import Login from "@/pages/Login";
@@ -29,10 +30,11 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <LanguageProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <TranslationProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
@@ -136,8 +138,9 @@ const App = () => (
             {/* 404 Catch All */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          </BrowserRouter>
-        </AuthProvider>
+            </BrowserRouter>
+          </AuthProvider>
+        </TranslationProvider>
       </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
