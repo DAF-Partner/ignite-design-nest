@@ -29,6 +29,7 @@ import {
   getApprovalsForUser, 
   getInvoicesForUser 
 } from '@/lib/mockData';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { cn } from '@/lib/utils';
 
 interface DashboardCardProps {
@@ -88,6 +89,7 @@ function DashboardCard({
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   if (!user) return null;
@@ -109,17 +111,17 @@ export default function Dashboard() {
     switch (user.role) {
       case 'CLIENT':
         return {
-          title: 'Client Dashboard',
-          subtitle: 'Manage your debt collection cases and invoices',
+          title: t('clientDashboard'),
+          subtitle: t('clientDashboardSubtitle'),
           primaryActions: [
             {
-              label: 'Create New Case',
+              label: t('createNewCase'),
               icon: FileText,
               onClick: () => navigate('/cases/new'),
               variant: 'default' as const,
             },
             {
-              label: 'View All Cases',
+              label: t('viewAllCases'),
               icon: Users,
               onClick: () => navigate('/cases'),
               variant: 'outline' as const,
@@ -128,17 +130,17 @@ export default function Dashboard() {
         };
       case 'AGENT':
         return {
-          title: 'Agent Dashboard',
-          subtitle: 'Manage assigned cases and track progress',
+          title: t('agentDashboard'),
+          subtitle: t('agentDashboardSubtitle'),
           primaryActions: [
             {
-              label: 'My Cases',
+              label: t('myCases'),
               icon: FileText,
               onClick: () => navigate('/cases'),
               variant: 'default' as const,
             },
             {
-              label: 'Recent Activity',
+              label: t('recentActivity'),
               icon: Activity,
               onClick: () => navigate('/cases?filter=recent'),
               variant: 'outline' as const,
@@ -147,17 +149,17 @@ export default function Dashboard() {
         };
       case 'ADMIN':
         return {
-          title: 'Admin Dashboard',
-          subtitle: 'System overview and administrative controls',
+          title: t('adminDashboard'),
+          subtitle: t('adminDashboardSubtitle'),
           primaryActions: [
             {
-              label: 'Manage Users',
+              label: t('manageUsers'),
               icon: Users,
               onClick: () => navigate('/admin/users'),
               variant: 'default' as const,
             },
             {
-              label: 'Review Approvals',
+              label: t('reviewApprovals'),
               icon: CheckCircle,
               onClick: () => navigate('/approvals'),
               variant: 'outline' as const,
@@ -166,17 +168,17 @@ export default function Dashboard() {
         };
       case 'DPO':
         return {
-          title: 'Data Protection Dashboard',
-          subtitle: 'GDPR compliance and data management',
+          title: t('dataProtectionDashboard'),
+          subtitle: t('dpoDashboardSubtitle'),
           primaryActions: [
             {
-              label: 'GDPR Requests',
+              label: t('gdprRequestsNav'),
               icon: Shield,
               onClick: () => navigate('/gdpr'),
               variant: 'default' as const,
             },
             {
-              label: 'DPO Tools',
+              label: t('dpoTools'),
               icon: Scale,
               onClick: () => navigate('/dpo'),
               variant: 'outline' as const,
@@ -185,8 +187,8 @@ export default function Dashboard() {
         };
       default:
         return {
-          title: 'Dashboard',
-          subtitle: 'Welcome to CollectPro',
+          title: t('dashboardTitle'),
+          subtitle: `${t('welcomeBack')} CollectPro`,
           primaryActions: [],
         };
     }
@@ -220,30 +222,30 @@ export default function Dashboard() {
       {/* Key Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <DashboardCard
-          title="Total Cases"
+          title={t('totalCases')}
           value={userCases.length}
-          description="All cases you have access to"
+          description={t('allCasesAccess')}
           icon={FileText}
           onClick={() => navigate('/cases')}
         />
         <DashboardCard
-          title="Active Cases"
+          title={t('activeCases')}
           value={userCases.filter(c => ['new', 'in_progress', 'awaiting_approval', 'legal_stage'].includes(c.status)).length}
-          description="Currently being processed"
+          description={t('currentlyBeingProcessed')}
           icon={Clock}
           onClick={() => navigate('/cases?status=active')}
         />
         <DashboardCard
-          title="Pending Approvals"
+          title={t('pendingApprovals')}
           value={pendingApprovals.length}
-          description="Awaiting your decision"
+          description={t('awaitingYourDecision')}
           icon={AlertTriangle}
           onClick={() => navigate('/approvals')}
         />
         <DashboardCard
-          title="Success Rate"
+          title={t('successRate')}
           value={`${stats.successRate}%`}
-          description="Cases successfully resolved"
+          description={t('casesSuccessfullyResolved')}
           icon={Target}
           trend={5.2}
         />

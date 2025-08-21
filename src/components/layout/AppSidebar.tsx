@@ -32,6 +32,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { cn } from '@/lib/utils';
 
 const navigationItems = [
@@ -121,6 +122,7 @@ const dpoItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const { user, hasRole } = useAuth();
+  const { t } = useTranslation();
   const location = useLocation();
   
   const collapsed = state === 'collapsed';
@@ -168,10 +170,10 @@ export function AppSidebar() {
             {!collapsed && (
               <div>
                 <h1 className="text-lg font-semibold text-sidebar-foreground">
-                  CollectPro
+                  {t('collectPro')}
                 </h1>
                 <p className="text-xs text-sidebar-foreground/60">
-                  Debt Collection Platform
+                  {t('debtCollectionPlatform')}
                 </p>
               </div>
             )}
@@ -201,7 +203,7 @@ export function AppSidebar() {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredMainItems.map((item) => (
@@ -221,7 +223,7 @@ export function AppSidebar() {
         {/* Admin Section */}
         {filteredAdminItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Administration</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('administration')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {filteredAdminItems.map((item) => (
@@ -242,7 +244,7 @@ export function AppSidebar() {
         {/* DPO Section */}
         {filteredDpoItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Data Protection</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('dataProtection')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {filteredDpoItems.map((item) => (
@@ -263,7 +265,7 @@ export function AppSidebar() {
         {/* User Section */}
         {filteredUserItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Account</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('account')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {filteredUserItems.map((item) => (

@@ -17,12 +17,14 @@ import { Money } from '@/components/ui/money';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { mockCases } from '@/lib/mockData';
 import { Case, CaseStatus } from '@/types';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { cn } from '@/lib/utils';
 
 const ITEMS_PER_PAGE = 10;
 
 export default function Cases() {
   const { user, hasRole } = useAuth();
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [sortBy, setSortBy] = useState<'createdAt' | 'amount' | 'updatedAt'>('createdAt');
@@ -128,9 +130,9 @@ export default function Cases() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Cases</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('casesTitle')}</h1>
           <p className="text-muted-foreground mt-1">
-            Manage debt collection cases and track recovery progress
+            {t('casesDescription')}
           </p>
         </div>
         <div className="flex items-center gap-3">

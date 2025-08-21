@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { cn } from '@/lib/utils';
 
 interface LocationState {
@@ -29,6 +30,7 @@ export default function Login() {
   
   const { login, isAuthenticated, error, clearError } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const location = useLocation();
   
   const state = location.state as LocationState;
@@ -49,8 +51,8 @@ export default function Login() {
     
     if (!acceptTerms) {
       toast({
-        title: 'Terms Required',
-        description: 'Please accept the Terms of Service and Privacy Policy to continue.',
+        title: t('termsRequired'),
+        description: t('acceptTermsMessage'),
         variant: 'destructive',
       });
       return;
@@ -63,8 +65,8 @@ export default function Login() {
       await login(email, password);
       
       toast({
-        title: 'Welcome back!',
-        description: 'You have been successfully logged in.',
+        title: t('welcomeBack'),
+        description: t('successfullyLoggedIn'),
       });
     } catch (err) {
       // Error is handled by AuthProvider, just show in UI
@@ -95,18 +97,18 @@ export default function Login() {
           <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
             <Building2 className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">CollectPro</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t('collectPro')}</h1>
           <p className="text-muted-foreground">
-            Professional Debt Collection Platform
+            {t('professionalDebtCollection')}
           </p>
         </div>
 
         {/* Login Form */}
         <Card className="card-professional">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-center">Sign In</CardTitle>
+            <CardTitle className="text-xl text-center">{t('loginTitle')}</CardTitle>
             <CardDescription className="text-center">
-              Enter your credentials to access your account
+              {t('loginDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
