@@ -5,6 +5,11 @@ export type UserRole = 'CLIENT' | 'AGENT' | 'ADMIN' | 'DPO';
 
 export type CaseStatus = 'new' | 'in_progress' | 'awaiting_approval' | 'legal_stage' | 'closed';
 
+// Enhanced Case Intake System Types
+export type CaseIntakeStatus = 'draft' | 'submitted' | 'under_review' | 'accepted' | 'needs_info' | 'rejected';
+
+export type DebtorType = 'individual' | 'company';
+
 export type ApprovalType = 'expense' | 'legal_escalation' | 'retrieval' | 'settlement_approval' | 'payment_plan' | 'write_off';
 
 export type ApprovalState = 'pending' | 'approved' | 'rejected';
@@ -301,4 +306,194 @@ export interface DashboardStats {
   monthlyRecovered: number;
   averageRecoveryTime: number;
   successRate: number;
+}
+
+// Enhanced Case Intake & Admin Configuration Types
+export interface ServiceLevel {
+  id: string;
+  name: string;
+  code: string;
+  description?: string;
+  slaHours: number;
+  isActive: boolean;
+  isSystemDefault: boolean;
+  tenantId?: string;
+  createdBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DebtStatus {
+  id: string;
+  name: string;
+  code: string;
+  description?: string;
+  isActive: boolean;
+  isSystemDefault: boolean;
+  tenantId?: string;
+  createdBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LawfulBasis {
+  id: string;
+  name: string;
+  code: string;
+  description?: string;
+  articleReference?: string;
+  isActive: boolean;
+  isSystemDefault: boolean;
+  tenantId?: string;
+  createdBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CaseIntake {
+  id: string;
+  reference: string;
+  
+  // Contract & Service Info
+  contractId?: string;
+  serviceLevelId?: string;
+  serviceLevel?: ServiceLevel;
+  debtStatusId?: string;
+  debtStatus?: DebtStatus;
+  
+  // Debtor Info with GDPR
+  debtorName: string;
+  debtorType: DebtorType;
+  debtorTaxId?: string;
+  debtorVatId?: string;
+  debtorEmail?: string;
+  debtorPhone?: string;
+  debtorAddress?: {
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+  };
+  debtorCountry?: string;
+  isGdprSubject: boolean;
+  lawfulBasisId?: string;
+  lawfulBasis?: LawfulBasis;
+  
+  // Financial Totals (computed from invoices)
+  totalAmount: number;
+  totalVat: number;
+  totalPenalties: number;
+  totalInterest: number;
+  totalFees: number;
+  currencyCode: string;
+  
+  // Workflow State
+  status: CaseIntakeStatus;
+  
+  // Metadata
+  notes?: string;
+  clientId: string;
+  assignedAgentId?: string;
+  createdBy: string;
+  submittedAt?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  reviewNotes?: string;
+  rejectionReason?: string;
+  
+  // Timestamps
+  createdAt: string;
+  updatedAt: string;
+  
+  // Related Data
+  invoices?: CaseInvoice[];
+  messages?: CaseMessage[];
+  auditEvents?: CaseAuditEvent[];
+}
+
+export interface CaseInvoice {
+  id: string;
+  caseId: string;
+  invoiceNumber: string;
+  issueDate: string;
+  dueDate: string;
+  amount: number;
+  vatAmount: number;
+  penalties: number;
+  interest: number;
+  fees: number;
+  currencyCode: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CaseMessage {
+  id: string;
+  caseId: string;
+  messageType: 'user' | 'system' | 'auto';
+  senderId: string;
+  senderName: string;
+  content: string;
+  mentions: string[];
+  isInternal: boolean;
+  createdAt: string;
+}
+
+export interface CaseAuditEvent {
+  id: string;
+  caseId: string;
+  eventType: string;
+  eventDescription: string;
+  actorId: string;
+  actorName: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+}
+
+export interface CreateCaseIntakeRequest {
+  // Contract & Service Info
+  contractId?: string;
+  serviceLevelId: string;
+  debtStatusId: string;
+  
+  // Debtor Info
+  debtorName: string;
+  debtorType: DebtorType;
+  debtorTaxId?: string;
+  debtorVatId?: string;
+  debtorEmail?: string;
+  debtorPhone?: string;
+  debtorAddress?: {
+    street?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+  };
+  debtorCountry?: string;
+  isGdprSubject: boolean;
+  lawfulBasisId?: string;
+  
+  // Financials
+  currencyCode: string;
+  invoices: Omit<CaseInvoice, 'id' | 'caseId' | 'createdAt' | 'updatedAt'>[];
+  
+  // Case Info
+  notes?: string;
+  clientId: string;
+}
+
+export interface CaseIntakeValidation {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+export interface AcceptanceReview {
+  caseId: string;
+  action: 'accept' | 'reject' | 'request_fixes';
+  reviewNotes?: string;
+  rejectionReason?: string;
+  fixesRequired?: string[];
+  assignedAgentId?: string;
 }
