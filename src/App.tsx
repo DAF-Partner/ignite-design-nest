@@ -23,6 +23,10 @@ import Users from "@/pages/admin/Users";
 import Tariffs from "@/pages/admin/Tariffs";
 import Templates from "@/pages/admin/Templates";
 import RetentionPolicy from "@/pages/admin/RetentionPolicy";
+import OptionsManager from "@/pages/admin/OptionsManager";
+import CaseIntakeWizard from "@/pages/CaseIntakeWizard";
+import AcceptanceReview from "@/pages/AcceptanceReview";
+import CaseIntakes from "@/pages/CaseIntakes";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +66,23 @@ const App = () => (
               <Route path="cases/:id" element={
                 <RoleGuard allowedRoles={['CLIENT', 'AGENT', 'ADMIN', 'DPO']}>
                   <CaseDetail />
+                </RoleGuard>
+              } />
+              
+              {/* Case Intakes */}
+              <Route path="case-intakes" element={
+                <RoleGuard allowedRoles={['CLIENT', 'AGENT', 'ADMIN', 'DPO']}>
+                  <CaseIntakes />
+                </RoleGuard>
+              } />
+              <Route path="case-intakes/new" element={
+                <RoleGuard allowedRoles={['CLIENT', 'ADMIN']}>
+                  <CaseIntakeWizard />
+                </RoleGuard>
+              } />
+              <Route path="case-intakes/:id/review" element={
+                <RoleGuard allowedRoles={['ADMIN', 'AGENT']}>
+                  <AcceptanceReview />
                 </RoleGuard>
               } />
               
@@ -121,6 +142,12 @@ const App = () => (
               <Route path="admin/retention" element={
                 <RoleGuard allowedRoles={['ADMIN']}>
                   <RetentionPolicy />
+                </RoleGuard>
+              } />
+              
+              <Route path="admin/options" element={
+                <RoleGuard allowedRoles={['ADMIN']}>
+                  <OptionsManager />
                 </RoleGuard>
               } />
               

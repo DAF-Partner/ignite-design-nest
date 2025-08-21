@@ -43,8 +43,8 @@ const navigationItems = [
     roles: ['CLIENT', 'AGENT', 'ADMIN', 'DPO'],
   },
   {
-    title: 'Cases',
-    url: '/cases',
+    title: 'Case Intakes',
+    url: '/case-intakes',
     icon: FileText,
     roles: ['CLIENT', 'AGENT', 'ADMIN', 'DPO'],
   },
@@ -106,6 +106,12 @@ const adminItems = [
     title: 'Retention Policy',
     url: '/admin/retention',
     icon: Archive,
+    roles: ['ADMIN'],
+  },
+  {
+    title: 'Configuration',
+    url: '/admin/options',
+    icon: Settings,
     roles: ['ADMIN'],
   },
 ];

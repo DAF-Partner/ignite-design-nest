@@ -12,7 +12,13 @@ import type {
   PaginatedResponse,
   ApiResponse,
   AuthTokens,
-  DashboardStats
+  DashboardStats,
+  CaseIntake,
+  CreateCaseIntakeRequest,
+  AcceptanceReview,
+  ServiceLevel,
+  DebtStatus,
+  LawfulBasis
 } from '@/types';
 
 // Base API configuration
@@ -222,6 +228,54 @@ export interface IRetentionApi {
   getPendingDeletions(): Promise<ApiResponse<any[]>>;
 }
 
+// Case Intakes API Interface
+export interface ICaseIntakesApi {
+  getCaseIntakes(params?: {
+    status?: string[];
+    clientId?: string;
+    assignedAgentId?: string;
+    cursor?: string;
+    limit?: number;
+  }): Promise<PaginatedResponse<CaseIntake>>;
+  
+  getCaseIntake(id: string): Promise<ApiResponse<CaseIntake>>;
+  
+  createCaseIntake(data: CreateCaseIntakeRequest): Promise<ApiResponse<CaseIntake>>;
+  
+  updateCaseIntake(id: string, data: Partial<CaseIntake>): Promise<ApiResponse<CaseIntake>>;
+  
+  deleteCaseIntake(id: string): Promise<ApiResponse<void>>;
+  
+  submitForReview(id: string): Promise<ApiResponse<CaseIntake>>;
+  
+  reviewCaseIntake(id: string, review: AcceptanceReview): Promise<ApiResponse<CaseIntake>>;
+  
+  getCaseIntakeMessages(caseId: string): Promise<ApiResponse<any[]>>;
+  
+  addCaseIntakeMessage(caseId: string, message: any): Promise<ApiResponse<any>>;
+}
+
+// Admin Configuration API Interface
+export interface IAdminConfigApi {
+  // Service Levels
+  getServiceLevels(): Promise<ApiResponse<ServiceLevel[]>>;
+  createServiceLevel(data: Partial<ServiceLevel>): Promise<ApiResponse<ServiceLevel>>;
+  updateServiceLevel(id: string, data: Partial<ServiceLevel>): Promise<ApiResponse<ServiceLevel>>;
+  deleteServiceLevel(id: string): Promise<ApiResponse<void>>;
+  
+  // Debt Statuses
+  getDebtStatuses(): Promise<ApiResponse<DebtStatus[]>>;
+  createDebtStatus(data: Partial<DebtStatus>): Promise<ApiResponse<DebtStatus>>;
+  updateDebtStatus(id: string, data: Partial<DebtStatus>): Promise<ApiResponse<DebtStatus>>;
+  deleteDebtStatus(id: string): Promise<ApiResponse<void>>;
+  
+  // Lawful Bases
+  getLawfulBases(): Promise<ApiResponse<LawfulBasis[]>>;
+  createLawfulBasis(data: Partial<LawfulBasis>): Promise<ApiResponse<LawfulBasis>>;
+  updateLawfulBasis(id: string, data: Partial<LawfulBasis>): Promise<ApiResponse<LawfulBasis>>;
+  deleteLawfulBasis(id: string): Promise<ApiResponse<void>>;
+}
+
 // Analytics API Interface
 export interface IAnalyticsApi {
   getDashboardStats(params?: {
@@ -250,6 +304,7 @@ export interface IAnalyticsApi {
 export interface IApiClient {
   auth: IAuthApi;
   cases: ICasesApi;
+  caseIntakes: ICaseIntakesApi;
   approvals: IApprovalsApi;
   invoices: IInvoicesApi;
   gdpr: IGdprApi;
@@ -258,6 +313,7 @@ export interface IApiClient {
   templates: ITemplatesApi;
   retention: IRetentionApi;
   analytics: IAnalyticsApi;
+  adminConfig: IAdminConfigApi;
   
   // Client configuration
   setBaseUrl(url: string): void;
