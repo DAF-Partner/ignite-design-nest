@@ -86,6 +86,12 @@ const CURRENCIES = [
   { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
 ];
 
+const generateReference = () => {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 7);
+  return `CI-${timestamp}-${random}`.toUpperCase();
+};
+
 export default function CaseIntakeWizard() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -337,6 +343,10 @@ export default function CaseIntakeWizard() {
     setIsDraftSaving(true);
     try {
       const request: CreateCaseIntakeRequest = {
+        createdBy: user?.id || '',
+        reference: generateReference(),
+        clientId: user?.clientId || user?.id || '',
+        totalAmount,
         contractId: formData.contractId,
         serviceLevelId: formData.serviceLevelId,
         debtStatusId: formData.debtStatusId,
@@ -353,7 +363,6 @@ export default function CaseIntakeWizard() {
         currencyCode: formData.currencyCode,
         invoices: formData.invoices,
         notes: formData.notes || undefined,
-        clientId: user?.clientId || user?.id!,
       };
 
       await apiClient.post('/case-intakes/draft', request);
@@ -380,6 +389,10 @@ export default function CaseIntakeWizard() {
     setIsSubmitting(true);
     try {
       const request: CreateCaseIntakeRequest = {
+        createdBy: user?.id || '',
+        reference: generateReference(),
+        clientId: user?.clientId || user?.id || '',
+        totalAmount,
         contractId: formData.contractId,
         serviceLevelId: formData.serviceLevelId,
         debtStatusId: formData.debtStatusId,
@@ -396,7 +409,6 @@ export default function CaseIntakeWizard() {
         currencyCode: formData.currencyCode,
         invoices: formData.invoices,
         notes: formData.notes || undefined,
-        clientId: user?.clientId || user?.id!,
       };
 
       const result = await apiClient.post<{ id: string }>('/case-intakes', request);

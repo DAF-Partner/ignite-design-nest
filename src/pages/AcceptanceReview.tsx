@@ -178,7 +178,9 @@ export default function AcceptanceReview() {
     try {
       const reviewData: AcceptanceReviewType = {
         caseId: caseIntake.id,
+        decision: formData.action === 'accept' ? 'accepted' : formData.action === 'reject' ? 'rejected' : 'request_fixes',
         action: formData.action,
+        reviewedBy: user?.id || '',
         reviewNotes: formData.reviewNotes || undefined,
         rejectionReason: formData.rejectionReason || undefined,
         fixesRequired: formData.fixesRequired.length > 0 ? formData.fixesRequired : undefined,

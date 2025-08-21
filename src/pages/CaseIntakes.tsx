@@ -30,7 +30,7 @@ export default function CaseIntakes() {
       setLoading(true);
       const params: any = {};
       
-      if (statusFilter) {
+      if (statusFilter && statusFilter !== 'all') {
         params.status = [statusFilter];
       }
       
@@ -125,7 +125,7 @@ export default function CaseIntakes() {
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="submitted">Submitted</SelectItem>
                 <SelectItem value="accepted">Accepted</SelectItem>
