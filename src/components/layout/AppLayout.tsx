@@ -8,7 +8,6 @@ import { AppSidebar } from '@/components/layout/AppSidebar';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { NotificationsBell } from '@/components/layout/NotificationsBell';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { PageTransition } from '@/components/ui/page-transition';
 
 export function AppLayout() {
   const location = useLocation();
@@ -24,9 +23,7 @@ export function AppLayout() {
           
           <main className="flex-1 overflow-auto">
             <div className="container mx-auto p-6">
-              <PageTransition>
-                <Outlet />
-              </PageTransition>
+              <Outlet />
             </div>
           </main>
         </div>

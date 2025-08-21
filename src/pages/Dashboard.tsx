@@ -22,9 +22,6 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Money } from '@/components/ui/money';
-import { AnimatedCard } from '@/components/ui/animated-card';
-import { AnimatedNumber } from '@/components/ui/animated-number';
-import { AnimatedList, AnimatedListItem } from '@/components/ui/animated-list';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { 
   mockDashboardStats, 
@@ -55,7 +52,7 @@ function DashboardCard({
   onClick 
 }: DashboardCardProps) {
   return (
-    <AnimatedCard 
+    <Card 
       className={cn(
         'card-professional hover:shadow-popover transition-shadow cursor-pointer',
         className
@@ -67,13 +64,7 @@ function DashboardCard({
         <Icon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
-          {typeof value === 'number' ? (
-            <AnimatedNumber value={value} />
-          ) : (
-            value
-          )}
-        </div>
+        <div className="text-2xl font-bold">{value}</div>
         {description && (
           <p className="text-xs text-muted-foreground mt-1">{description}</p>
         )}
@@ -92,7 +83,7 @@ function DashboardCard({
           </div>
         )}
       </CardContent>
-    </AnimatedCard>
+    </Card>
   );
 }
 
@@ -302,28 +293,26 @@ export default function Dashboard() {
                 <p>No cases found</p>
               </div>
             ) : (
-              <AnimatedList className="space-y-0">
-                {recentCases.map((case_) => (
-                  <AnimatedListItem
-                    key={case_.id}
-                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 cursor-pointer transition-colors"
-                    onClick={() => navigate(`/cases/${case_.id}`)}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className="font-medium truncate">{case_.debtor.name}</p>
-                        <StatusBadge status={case_.status} size="sm" />
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        <Money amount={case_.amount} currency={case_.currency} size="sm" />
-                        {case_.assignedAgentName && (
-                          <span className="ml-2">• {case_.assignedAgentName}</span>
-                        )}
-                      </p>
+              recentCases.map((case_) => (
+                <div
+                  key={case_.id}
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 cursor-pointer transition-colors"
+                  onClick={() => navigate(`/cases/${case_.id}`)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-medium truncate">{case_.debtor.name}</p>
+                      <StatusBadge status={case_.status} size="sm" />
                     </div>
-                  </AnimatedListItem>
-                ))}
-              </AnimatedList>
+                    <p className="text-sm text-muted-foreground">
+                      <Money amount={case_.amount} currency={case_.currency} size="sm" />
+                      {case_.assignedAgentName && (
+                        <span className="ml-2">• {case_.assignedAgentName}</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ))
             )}
             {recentCases.length > 0 && (
               <Button 
