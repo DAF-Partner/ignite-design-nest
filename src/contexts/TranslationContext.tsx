@@ -1267,18 +1267,7 @@ interface TranslationContextType {
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
 
 export function TranslationProvider({ children }: { children: React.ReactNode }) {
-  console.log('TranslationProvider initializing...');
-  
-  let currentLanguage = 'en'; // Default fallback
-  try {
-    const languageContext = useLanguage();
-    console.log('LanguageContext received:', languageContext);
-    currentLanguage = languageContext.currentLanguage;
-  } catch (error) {
-    console.error('Error accessing LanguageContext:', error);
-  }
-
-  console.log('Using language:', currentLanguage);
+  const { currentLanguage } = useLanguage();
 
   const t = (key: string): string => {
     const languageTranslations = translations[currentLanguage as keyof typeof translations];
@@ -1289,8 +1278,6 @@ export function TranslationProvider({ children }: { children: React.ReactNode })
     t,
   };
 
-  console.log('TranslationProvider value created:', value);
-
   return (
     <TranslationContext.Provider value={value}>
       {children}
@@ -1299,11 +1286,8 @@ export function TranslationProvider({ children }: { children: React.ReactNode })
 }
 
 export function useTranslation() {
-  console.log('useTranslation called...');
   const context = useContext(TranslationContext);
-  console.log('TranslationContext value:', context);
   if (context === undefined) {
-    console.error('TranslationContext is undefined - not within TranslationProvider!');
     throw new Error('useTranslation must be used within a TranslationProvider');
   }
   return context;
