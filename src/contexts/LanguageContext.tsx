@@ -24,24 +24,30 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  console.log('LanguageProvider initializing...');
+  
   const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
     // Try to get saved language from localStorage, fallback to browser language or English
     const savedLanguage = localStorage.getItem('app-language');
     if (savedLanguage && SUPPORTED_LANGUAGES.some(lang => lang.code === savedLanguage)) {
+      console.log('Using saved language:', savedLanguage);
       return savedLanguage;
     }
     
     // Try to match browser language
     const browserLanguage = navigator.language.split('-')[0];
     if (SUPPORTED_LANGUAGES.some(lang => lang.code === browserLanguage)) {
+      console.log('Using browser language:', browserLanguage);
       return browserLanguage;
     }
     
+    console.log('Using default language: en');
     return 'en'; // Default to English
   });
 
   const setLanguage = (languageCode: string) => {
     if (SUPPORTED_LANGUAGES.some(lang => lang.code === languageCode)) {
+      console.log('Setting language to:', languageCode);
       setCurrentLanguage(languageCode);
       localStorage.setItem('app-language', languageCode);
       
@@ -58,6 +64,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Set initial HTML lang attribute
     document.documentElement.lang = currentLanguage;
+    console.log('LanguageProvider initialized with language:', currentLanguage);
   }, [currentLanguage]);
 
   const value: LanguageContextType = {
@@ -66,6 +73,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     getSupportedLanguages,
     getLanguageInfo,
   };
+
+  console.log('LanguageProvider value created:', value);
 
   return (
     <LanguageContext.Provider value={value}>
