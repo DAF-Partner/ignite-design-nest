@@ -213,7 +213,7 @@ export default function OptionsManager() {
   ) => {
     try {
       const updated = { ...item, isActive: !item.isActive };
-      const result = await apiClient.put<T>(`${endpoint}/${item.id}`, updated);
+      const result = await apiClient.patch<T>(`${endpoint}/${item.id}`, updated);
       setter(prev => prev.map(existing => existing.id === item.id ? result : existing));
     } catch (error) {
       console.error('Toggle active failed:', error);
@@ -630,7 +630,6 @@ export default function OptionsManager() {
                           <Switch
                             checked={status.isActive}
                             onCheckedChange={() => handleToggleActive('/admin/debt-statuses', status, setDebtStatuses)}
-                            size="sm"
                           />
                           <span className="text-sm">{status.isActive ? 'Active' : 'Inactive'}</span>
                         </div>
@@ -829,7 +828,6 @@ export default function OptionsManager() {
                           <Switch
                             checked={basis.isActive}
                             onCheckedChange={() => handleToggleActive('/admin/lawful-bases', basis, setLawfulBases)}
-                            size="sm"
                           />
                           <span className="text-sm">{basis.isActive ? 'Active' : 'Inactive'}</span>
                         </div>
