@@ -481,11 +481,11 @@ class SupabaseCaseIntakesApi implements ICaseIntakesApi {
       const { data, error } = await supabase
         .from('case_intakes')
         .update({
-          status: review.decision,
+          status: review.action === 'accept' ? 'accepted' : review.action === 'reject' ? 'rejected' : 'needs_info',
           reviewed_at: new Date().toISOString(),
           reviewed_by: review.reviewedBy,
-          review_notes: review.reviewNotes,
-          rejection_reason: review.decision === 'rejected' ? review.rejectionReason : null
+          review_notes: review.reviewNotes || review.notes,
+          rejection_reason: review.action === 'reject' ? review.rejectionReason : null
         })
         .eq('id', id)
         .select()

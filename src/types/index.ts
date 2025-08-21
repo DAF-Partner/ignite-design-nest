@@ -452,6 +452,11 @@ export interface CaseAuditEvent {
 }
 
 export interface CreateCaseIntakeRequest {
+  // Basic Info
+  clientId: string;
+  createdBy: string;
+  reference: string;
+  
   // Contract & Service Info
   contractId?: string;
   serviceLevelId: string;
@@ -474,13 +479,13 @@ export interface CreateCaseIntakeRequest {
   isGdprSubject: boolean;
   lawfulBasisId?: string;
   
-  // Financials
+  // Financial Info
+  totalAmount: number;
   currencyCode: string;
   invoices: Omit<CaseInvoice, 'id' | 'caseId' | 'createdAt' | 'updatedAt'>[];
   
   // Case Info
   notes?: string;
-  clientId: string;
 }
 
 export interface CaseIntakeValidation {
@@ -491,7 +496,10 @@ export interface CaseIntakeValidation {
 
 export interface AcceptanceReview {
   caseId: string;
+  decision: 'accepted' | 'rejected' | 'request_fixes';
   action: 'accept' | 'reject' | 'request_fixes';
+  reviewedBy: string;
+  notes?: string;
   reviewNotes?: string;
   rejectionReason?: string;
   fixesRequired?: string[];
