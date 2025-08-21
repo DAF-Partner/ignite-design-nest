@@ -94,6 +94,11 @@ export default function Settings() {
     },
   });
 
+  // Update form when language changes in context
+  React.useEffect(() => {
+    preferencesForm.setValue('language', currentLanguage);
+  }, [currentLanguage, preferencesForm]);
+
   const onNotificationSubmit = async (data: NotificationSettings) => {
     try {
       // TODO: Implement API call to update notification settings
@@ -449,7 +454,7 @@ export default function Settings() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Language</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                               <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Select language" />
