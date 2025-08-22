@@ -39,6 +39,20 @@ export interface SecureCase {
   reviewed_at?: string;
 }
 
+// Map database status values to frontend expected values
+function mapDatabaseStatusToFrontend(dbStatus: string): string {
+  const statusMapping: Record<string, string> = {
+    'draft': 'new',
+    'submitted': 'in_progress',
+    'under_review': 'in_progress', 
+    'accepted': 'awaiting_approval',
+    'needs_info': 'in_progress',
+    'rejected': 'closed'
+  };
+  
+  return statusMapping[dbStatus] || dbStatus;
+}
+
 // Transform secure case data to application format
 function transformSecureCaseToCase(secureCase: SecureCase): Case {
   return {
@@ -61,7 +75,7 @@ function transformSecureCaseToCase(secureCase: SecureCase): Case {
     },
     amount: secureCase.total_amount,
     currency: secureCase.currency_code,
-    status: secureCase.status as any,
+    status: mapDatabaseStatusToFrontend(secureCase.status) as any,
     description: secureCase.notes,
     originalCreditor: undefined, // This would need to be added to the database
     createdAt: secureCase.created_at,
@@ -128,7 +142,7 @@ export const caseApi = {
         },
         amount: caseData.total_amount,
         currency: caseData.currency_code,
-        status: caseData.status as any,
+        status: mapDatabaseStatusToFrontend(caseData.status) as any,
         description: caseData.notes,
         originalCreditor: undefined, // This would need to be added
         createdAt: caseData.created_at,
