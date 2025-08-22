@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Plus, Save, X, Clock, User, FileText, Phone, Mail, MessageSquare, Scale, HandCoins, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { toast } from 'sonner';
@@ -165,227 +165,214 @@ export function ActionLogger({ caseId, onActionLogged }: ActionLoggerProps) {
     return null;
   };
 
-  if (!isOpen) {
-    return (
-      <Button
-        onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 bg-primary hover:bg-primary/90"
-        size="sm"
-      >
-        <Plus className="h-4 w-4" />
-        Log New Action
-      </Button>
-    );
-  }
-
   return (
-    <Card className="card-professional animate-fade-in">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center justify-between">
-          <span className="flex items-center gap-2">
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button
+          className="flex items-center gap-2 bg-primary hover:bg-primary/90"
+          size="sm"
+        >
+          <Plus className="h-4 w-4" />
+          Log New Action
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
             <div className="p-1.5 bg-primary/10 rounded-lg">
               <Plus className="h-5 w-5 text-primary" />
             </div>
             Log New Action
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCancel}
-            disabled={isLoading}
-            className="h-8 w-8 p-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Record actions taken on this case for audit trail and progress tracking
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Action Category Selection */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Action Category</Label>
-            <div className="grid grid-cols-2 gap-3">
-              {Object.entries(ACTION_CATEGORIES).map(([key, category]) => {
-                const Icon = category.icon;
-                const isSelected = selectedCategory === key;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => {
-                      setSelectedCategory(key);
-                      setFormData(prev => ({ ...prev, action_type: '' }));
-                    }}
-                    disabled={isLoading}
-                    className={`p-3 rounded-lg border-2 transition-all text-left hover-scale ${
-                      isSelected 
-                        ? 'border-primary bg-primary/5' 
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <Icon className="h-4 w-4" />
-                      <span className="font-medium text-sm">{category.label}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {category.actions.length} actions available
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Specific Action Selection */}
-          {selectedCategory && (
-            <div className="space-y-3 animate-fade-in">
-              <Label className="text-sm font-medium">Specific Action</Label>
-              <div className="grid grid-cols-1 gap-2">
-                {getAvailableActions().map((action) => {
-                  const ActionIcon = action.icon;
-                  const isSelected = formData.action_type === action.value;
+          </DialogTitle>
+          <p className="text-sm text-muted-foreground">
+            Record actions taken on this case for audit trail and progress tracking
+          </p>
+        </DialogHeader>
+        <div className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Action Category Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Action Category</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {Object.entries(ACTION_CATEGORIES).map(([key, category]) => {
+                  const Icon = category.icon;
+                  const isSelected = selectedCategory === key;
                   return (
                     <button
-                      key={action.value}
+                      key={key}
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, action_type: action.value }))}
+                      onClick={() => {
+                        setSelectedCategory(key);
+                        setFormData(prev => ({ ...prev, action_type: '' }));
+                      }}
                       disabled={isLoading}
-                      className={`p-3 rounded-lg border text-left transition-all hover-scale ${
+                      className={`p-3 rounded-lg border-2 transition-all text-left hover-scale ${
                         isSelected 
                           ? 'border-primary bg-primary/5' 
                           : 'border-border hover:border-primary/50'
                       }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <ActionIcon className="h-4 w-4" />
-                        <span className="font-medium text-sm">{action.label}</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon className="h-4 w-4" />
+                        <span className="font-medium text-sm">{category.label}</span>
                       </div>
+                      <p className="text-xs text-muted-foreground">
+                        {category.actions.length} actions available
+                      </p>
                     </button>
                   );
                 })}
               </div>
             </div>
-          )}
 
-          {/* Priority and Duration */}
-          {formData.action_type && (
-            <div className="grid grid-cols-2 gap-4 animate-fade-in">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Priority</Label>
-                <Select
-                  value={formData.priority}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PRIORITY_LEVELS.map((priority) => (
-                      <SelectItem key={priority.value} value={priority.value}>
+            {/* Specific Action Selection */}
+            {selectedCategory && (
+              <div className="space-y-3 animate-fade-in">
+                <Label className="text-sm font-medium">Specific Action</Label>
+                <div className="grid grid-cols-1 gap-2">
+                  {getAvailableActions().map((action) => {
+                    const ActionIcon = action.icon;
+                    const isSelected = formData.action_type === action.value;
+                    return (
+                      <button
+                        key={action.value}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, action_type: action.value }))}
+                        disabled={isLoading}
+                        className={`p-3 rounded-lg border text-left transition-all hover-scale ${
+                          isSelected 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                      >
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className={priority.color}>
-                            {priority.label}
-                          </Badge>
+                          <ActionIcon className="h-4 w-4" />
+                          <span className="font-medium text-sm">{action.label}</span>
                         </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+            )}
 
-              <div className="space-y-2">
-                <Label htmlFor="duration" className="text-sm font-medium">Duration (minutes)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  placeholder="e.g. 15"
-                  value={formData.duration_minutes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, duration_minutes: e.target.value }))}
+            {/* Priority and Duration */}
+            {formData.action_type && (
+              <div className="grid grid-cols-2 gap-4 animate-fade-in">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Priority</Label>
+                  <Select
+                    value={formData.priority}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRIORITY_LEVELS.map((priority) => (
+                        <SelectItem key={priority.value} value={priority.value}>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className={priority.color}>
+                              {priority.label}
+                            </Badge>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="duration" className="text-sm font-medium">Duration (minutes)</Label>
+                  <Input
+                    id="duration"
+                    type="number"
+                    placeholder="e.g. 15"
+                    value={formData.duration_minutes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, duration_minutes: e.target.value }))}
+                    disabled={isLoading}
+                    min="1"
+                    max="480"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Description */}
+            {formData.action_type && (
+              <div className="space-y-2 animate-fade-in">
+                <Label htmlFor="description" className="text-sm font-medium">
+                  Description <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  id="description"
+                  placeholder="Provide detailed information about the action taken, including any relevant context, outcomes, or next steps..."
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  rows={4}
                   disabled={isLoading}
-                  min="1"
-                  max="480"
+                  className="resize-none"
                 />
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Description */}
-          {formData.action_type && (
-            <div className="space-y-2 animate-fade-in">
-              <Label htmlFor="description" className="text-sm font-medium">
-                Description <span className="text-destructive">*</span>
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="Provide detailed information about the action taken, including any relevant context, outcomes, or next steps..."
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                rows={4}
-                disabled={isLoading}
-                className="resize-none"
-              />
-            </div>
-          )}
+            {/* Outcome and Next Action */}
+            {formData.description && (
+              <div className="space-y-4 animate-fade-in">
+                <Separator />
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="outcome" className="text-sm font-medium">Outcome/Result</Label>
+                    <Textarea
+                      id="outcome"
+                      placeholder="What was achieved or discovered from this action?"
+                      value={formData.outcome}
+                      onChange={(e) => setFormData(prev => ({ ...prev, outcome: e.target.value }))}
+                      rows={2}
+                      disabled={isLoading}
+                      className="resize-none"
+                    />
+                  </div>
 
-          {/* Outcome and Next Action */}
-          {formData.description && (
-            <div className="space-y-4 animate-fade-in">
-              <Separator />
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="outcome" className="text-sm font-medium">Outcome/Result</Label>
-                  <Textarea
-                    id="outcome"
-                    placeholder="What was achieved or discovered from this action?"
-                    value={formData.outcome}
-                    onChange={(e) => setFormData(prev => ({ ...prev, outcome: e.target.value }))}
-                    rows={2}
-                    disabled={isLoading}
-                    className="resize-none"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="next_action" className="text-sm font-medium">Recommended Next Action</Label>
-                  <Textarea
-                    id="next_action"
-                    placeholder="What should be done next based on this action?"
-                    value={formData.next_action}
-                    onChange={(e) => setFormData(prev => ({ ...prev, next_action: e.target.value }))}
-                    rows={2}
-                    disabled={isLoading}
-                    className="resize-none"
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="next_action" className="text-sm font-medium">Recommended Next Action</Label>
+                    <Textarea
+                      id="next_action"
+                      placeholder="What should be done next based on this action?"
+                      value={formData.next_action}
+                      onChange={(e) => setFormData(prev => ({ ...prev, next_action: e.target.value }))}
+                      rows={2}
+                      disabled={isLoading}
+                      className="resize-none"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Action Buttons */}
-          <div className="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isLoading || !formData.action_type || !formData.description.trim()}
-              className="flex items-center gap-2"
-            >
-              <Save className="h-4 w-4" />
-              {isLoading ? 'Logging...' : 'Log Action'}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCancel}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading || !formData.action_type || !formData.description.trim()}
+                className="flex items-center gap-2"
+              >
+                <Save className="h-4 w-4" />
+                {isLoading ? 'Logging...' : 'Log Action'}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
