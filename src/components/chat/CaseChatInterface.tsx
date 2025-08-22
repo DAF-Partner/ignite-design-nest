@@ -21,7 +21,6 @@ export function CaseChatInterface({ caseId, className }: CaseChatInterfaceProps)
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   useEffect(() => {
     loadCaseConversations();
@@ -53,7 +52,6 @@ export function CaseChatInterface({ caseId, className }: CaseChatInterfaceProps)
       });
       setConversations(prev => [conversation, ...prev]);
       setSelectedConversation(conversation);
-      setShowCreateDialog(false);
       return conversation;
     } catch (error) {
       console.error('Failed to create conversation:', error);
@@ -93,10 +91,16 @@ export function CaseChatInterface({ caseId, className }: CaseChatInterfaceProps)
             <p className="text-muted-foreground mb-4">
               Start a conversation about this case to communicate with team members and clients.
             </p>
-            <Button onClick={() => setShowCreateDialog(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Start Conversation
-            </Button>
+            <CreateConversationDialog
+              onCreateConversation={handleCreateConversation}
+              caseId={caseId}
+              trigger={
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Start Conversation
+                </Button>
+              }
+            />
           </CardContent>
         </Card>
       ) : (
@@ -105,19 +109,21 @@ export function CaseChatInterface({ caseId, className }: CaseChatInterfaceProps)
           <div className="lg:col-span-1">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium">Case Conversations</h3>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowCreateDialog(true)}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
+              <CreateConversationDialog
+                onCreateConversation={handleCreateConversation}
+                caseId={caseId}
+                trigger={
+                  <Button variant="outline" size="sm">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                }
+              />
             </div>
             <ConversationsList
               conversations={conversations}
               selectedConversationId={selectedConversation?.id}
               onSelectConversation={setSelectedConversation}
-              onCreateConversation={() => setShowCreateDialog(true)}
+              onCreateConversation={() => {}} // Not used since we're using the trigger approach
               loading={false}
               className="h-full"
             />
@@ -142,13 +148,6 @@ export function CaseChatInterface({ caseId, className }: CaseChatInterfaceProps)
           </div>
         </div>
       )}
-
-      <CreateConversationDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-        onCreateConversation={handleCreateConversation}
-        caseId={caseId}
-      />
     </div>
   );
 }
