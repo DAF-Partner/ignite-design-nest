@@ -62,9 +62,15 @@ const navigationItems = [
   },
   {
     title: 'GDPR Requests',
-    url: '/gdpr',
+    url: '/gdpr-requests',
     icon: Shield,
     roles: ['CLIENT', 'DPO', 'ADMIN'],
+  },
+  {
+    title: 'Communications',
+    url: '/communications',
+    icon: MessageSquare,
+    roles: ['CLIENT', 'AGENT', 'ADMIN', 'DPO'],
   },
 ];
 

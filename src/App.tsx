@@ -16,6 +16,7 @@ import CaseDetail from "@/pages/CaseDetail";
 import Approvals from "@/pages/Approvals";
 import Invoices from "@/pages/Invoices";
 import GdprRequests from "@/pages/GdprRequests";
+import Communications from '@/pages/Communications';
 import NotFound from "./pages/NotFound";
 import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
@@ -80,9 +81,16 @@ const App = () => (
               } />
               
               {/* GDPR Requests */}
-              <Route path="gdpr" element={
+              <Route path="gdpr-requests" element={
                 <RoleGuard allowedRoles={['DPO', 'ADMIN']}>
                   <GdprRequests />
+                </RoleGuard>
+              } />
+              
+              {/* Communications */}
+              <Route path="communications" element={
+                <RoleGuard allowedRoles={['CLIENT', 'AGENT', 'ADMIN', 'DPO']}>
+                  <Communications />
                 </RoleGuard>
               } />
               

@@ -15,6 +15,10 @@ export type GdprRequestType = 'SAR' | 'ERASURE' | 'RECTIFICATION' | 'PORTABILITY
 
 export type NotificationType = 'case_update' | 'approval_required' | 'document_uploaded' | 'payment_due';
 
+export type ConversationType = 'case' | 'general';
+
+export type MessageType = 'text' | 'system' | 'file';
+
 export interface User {
   id: string;
   email: string;
@@ -301,4 +305,58 @@ export interface DashboardStats {
   monthlyRecovered: number;
   averageRecoveryTime: number;
   successRate: number;
+}
+
+// Chat System Types
+export interface Conversation {
+  id: string;
+  title?: string;
+  type: ConversationType;
+  caseId?: string;
+  isClientVisible: boolean;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  participants?: ConversationParticipant[];
+  lastMessage?: ChatMessage;
+  unreadCount?: number;
+}
+
+export interface ConversationParticipant {
+  id: string;
+  conversationId: string;
+  userId: string;
+  userName: string;
+  userRole: UserRole;
+  joinedAt: string;
+  lastReadAt?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  content: string;
+  messageType: MessageType;
+  isInternal: boolean;
+  attachmentUrl?: string;
+  attachmentName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateConversationRequest {
+  title?: string;
+  type: ConversationType;
+  caseId?: string;
+  isClientVisible: boolean;
+  participantIds: string[];
+}
+
+export interface CreateMessageRequest {
+  conversationId: string;
+  content: string;
+  messageType?: MessageType;
+  isInternal?: boolean;
 }

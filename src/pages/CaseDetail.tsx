@@ -20,8 +20,12 @@ import { Money } from '@/components/ui/money';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { ActionLogger } from '@/components/case/ActionLogger';
 import { ActionHistory } from '@/components/case/ActionHistory';
+import { ConversationsList } from '@/components/chat/ConversationsList';
+import { ChatInterface } from '@/components/chat/ChatInterface';
+import { CreateConversationDialog } from '@/components/chat/CreateConversationDialog';
+import { useChat } from '@/hooks/useChat';
 import { mockCases, mockDocuments, mockEvents, mockMessages } from '@/lib/mockData';
-import { Case, Document, CaseEvent, Message } from '@/types';
+import { Case, Document, CaseEvent, Message, Conversation } from '@/types';
 import { cn } from '@/lib/utils';
 
 export default function CaseDetail() {
@@ -30,6 +34,10 @@ export default function CaseDetail() {
   const { user, hasRole } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [actionRefreshTrigger, setActionRefreshTrigger] = useState(0);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  
+  // Chat functionality
+  const { conversations, loading: chatLoading, createConversation } = useChat();
 
   // Find the case
   const case_ = useMemo(() => {
@@ -52,6 +60,11 @@ export default function CaseDetail() {
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [id]);
+
+  // Filter conversations for this case
+  const caseConversations = useMemo(() => {
+    return conversations.filter(conv => conv.type === 'case' && conv.caseId === id);
+  }, [conversations, id]);
 
   if (!case_) {
     return (
@@ -245,6 +258,7 @@ export default function CaseDetail() {
           <TabsTrigger value="actions">Actions</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="messages">Messages</TabsTrigger>
+          <TabsTrigger value="chat">Chat</TabsTrigger>
           <TabsTrigger value="approvals">Approvals</TabsTrigger>
         </TabsList>
 
@@ -556,6 +570,56 @@ export default function CaseDetail() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Chat Tab */}
+        <TabsContent value="chat" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
+            {/* Case Conversations List */}
+            <div className="lg:col-span-1">
+              <ConversationsList
+                conversations={caseConversations}
+                selectedConversationId={selectedConversation?.id}
+                onSelectConversation={(conv) => setSelectedConversation(conv)}
+                onCreateConversation={() => {}} // Handled by dialog
+                loading={chatLoading}
+                className="h-full"
+              />
+            </div>
+
+            {/* Chat Interface */}
+            <div className="lg:col-span-2">
+              {selectedConversation ? (
+                <ChatInterface
+                  conversation={selectedConversation}
+                  currentUserId={user?.id || ''}
+                  className="h-full"
+                />
+              ) : (
+                <Card className="h-full flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <MessageSquare className="h-16 w-16 text-muted-foreground mx-auto" />
+                    <div>
+                      <h3 className="text-lg font-medium">Case Communication</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Select a conversation or create a new one for this case
+                      </p>
+                      <CreateConversationDialog 
+                        onCreateConversation={createConversation}
+                        caseId={id}
+                        trigger={
+                          <Button>
+                            <Plus className="h-4 w-4 mr-2" />
+                            Start Case Discussion
+                          </Button>
+                        }
+                      />
+                    </div>
+                  </div>
+                </Card>
+              )}
+            </div>
+          </div>
         </TabsContent>
 
         {/* Approvals Tab */}
