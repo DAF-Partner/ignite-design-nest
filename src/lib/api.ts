@@ -258,7 +258,7 @@ async function mockCreateCase(data: CreateCaseRequest): Promise<Case> {
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   const newCase: Case = {
-    id: 'case_' + Date.now(),
+    id: crypto.randomUUID(),
     reference: data.reference,
     clientId: data.clientId,
     clientName: 'Mock Client', // Would be resolved from clientId

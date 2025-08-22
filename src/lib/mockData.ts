@@ -20,7 +20,7 @@ import {
 // Mock Cases Data
 export const mockCases: Case[] = [
   {
-    id: 'case_001',
+    id: '550e8400-e29b-41d4-a716-446655440001',
     reference: 'REF-2024-001',
     clientId: 'client_1',
     clientName: 'ACME Manufacturing Ltd',
@@ -46,7 +46,7 @@ export const mockCases: Case[] = [
     updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
   },
   {
-    id: 'case_002',
+    id: '550e8400-e29b-41d4-a716-446655440002',
     reference: 'REF-2024-002',
     clientId: 'client_1',
     clientName: 'ACME Manufacturing Ltd',
@@ -72,7 +72,7 @@ export const mockCases: Case[] = [
     updatedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
   },
   {
-    id: 'case_003',
+    id: '550e8400-e29b-41d4-a716-446655440003',
     reference: 'REF-2024-003',
     clientId: 'client_2',
     clientName: 'Sterling Financial Services',
@@ -98,7 +98,7 @@ export const mockCases: Case[] = [
     updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
-    id: 'case_004',
+    id: '550e8400-e29b-41d4-a716-446655440004',
     reference: 'REF-2024-004',
     clientId: 'client_2',
     clientName: 'Sterling Financial Services',
@@ -124,7 +124,7 @@ export const mockCases: Case[] = [
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
-    id: 'case_005',
+    id: '550e8400-e29b-41d4-a716-446655440005',
     reference: 'REF-2024-005',
     clientId: 'client_3',
     clientName: 'Nordic Enterprises',
@@ -150,7 +150,7 @@ export const mockCases: Case[] = [
     updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
-    id: 'case_006',
+    id: '550e8400-e29b-41d4-a716-446655440006',
     reference: 'REF-2024-006',
     clientId: 'client_3',
     clientName: 'Nordic Enterprises',
@@ -181,7 +181,7 @@ export const mockCases: Case[] = [
 export const mockEvents: CaseEvent[] = [
   {
     id: 'event_001',
-    caseId: 'case_001',
+    caseId: '550e8400-e29b-41d4-a716-446655440001',
     type: 'status_change',
     title: 'Case Status Updated',
     description: 'Case status changed from "new" to "in_progress"',
@@ -194,7 +194,7 @@ export const mockEvents: CaseEvent[] = [
   },
   {
     id: 'event_002',
-    caseId: 'case_001',
+    caseId: '550e8400-e29b-41d4-a716-446655440001',
     type: 'message_sent',
     title: 'Initial Demand Letter Sent',
     description: 'First demand letter sent to debtor via email',
@@ -207,7 +207,7 @@ export const mockEvents: CaseEvent[] = [
   },
   {
     id: 'event_003',
-    caseId: 'case_002',
+    caseId: '550e8400-e29b-41d4-a716-446655440002',
     type: 'approval_request',
     title: 'Legal Escalation Approval Requested',
     description: 'Approval requested for legal escalation due to non-response',
@@ -220,7 +220,7 @@ export const mockEvents: CaseEvent[] = [
   },
   {
     id: 'event_004',
-    caseId: 'case_003',
+    caseId: '550e8400-e29b-41d4-a716-446655440003',
     type: 'status_change',
     title: 'Case Status Updated to Resolved',
     description: 'Case resolved - full payment of $15,750 received',
@@ -239,7 +239,7 @@ export const mockEvents: CaseEvent[] = [
 export const mockMessages: Message[] = [
   {
     id: 'msg_001',
-    caseId: 'case_001',
+    caseId: '550e8400-e29b-41d4-a716-446655440001',
     direction: 'outbound',
     channel: 'email',
     content: 'Dear Global Tech Solutions, this is a formal demand for payment of invoice #INV-2024-001 for £12,500.00 which is now overdue.',
@@ -248,7 +248,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: 'msg_002',
-    caseId: 'case_001',
+    caseId: '550e8400-e29b-41d4-a716-446655440001',
     direction: 'outbound',
     channel: 'letter',
     content: 'Second formal demand letter - legal action may be taken if payment is not received within 7 days.',
@@ -257,7 +257,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: 'msg_003',
-    caseId: 'case_002',
+    caseId: '550e8400-e29b-41d4-a716-446655440002',
     direction: 'outbound',
     channel: 'phone',
     content: 'Phone call attempt - no answer. Left voicemail requesting urgent contact.',
@@ -266,7 +266,7 @@ export const mockMessages: Message[] = [
   },
   {
     id: 'msg_004',
-    caseId: 'case_004',
+    caseId: '550e8400-e29b-41d4-a716-446655440004',
     direction: 'outbound',
     channel: 'email',
     content: 'Initial payment reminder for outstanding amount of £4,500.00.',
@@ -279,7 +279,7 @@ export const mockMessages: Message[] = [
 export const mockApprovals: Approval[] = [
   {
     id: 'approval_001',
-    caseId: 'case_002',
+    caseId: '550e8400-e29b-41d4-a716-446655440002',
     caseName: 'Case #002 - Apex Consulting Group',
     type: 'legal_escalation',
     state: 'pending',
@@ -302,7 +302,7 @@ export const mockApprovals: Approval[] = [
   },
   {
     id: 'approval_002',
-    caseId: 'case_001',
+    caseId: '550e8400-e29b-41d4-a716-446655440001',
     caseName: 'Case #001 - Global Tech Solutions',
     type: 'expense',
     state: 'approved',
@@ -318,7 +318,7 @@ export const mockApprovals: Approval[] = [
   },
   {
     id: 'approval_003',
-    caseId: 'case_005',
+    caseId: '550e8400-e29b-41d4-a716-446655440005',
     caseName: 'Case #005 - Sustainable Solutions Ltd',
     type: 'settlement_approval',
     state: 'pending',
@@ -331,7 +331,7 @@ export const mockApprovals: Approval[] = [
   },
   {
     id: 'approval_004',
-    caseId: 'case_004',
+    caseId: '550e8400-e29b-41d4-a716-446655440004',
     caseName: 'Case #004 - Digital Marketing Pro',
     type: 'payment_plan',
     state: 'rejected',
@@ -347,7 +347,7 @@ export const mockApprovals: Approval[] = [
   },
   {
     id: 'approval_005',
-    caseId: 'case_001',
+    caseId: '550e8400-e29b-41d4-a716-446655440001',
     caseName: 'Case #001 - Global Tech Solutions',
     type: 'write_off',
     state: 'approved',
@@ -366,7 +366,7 @@ export const mockApprovals: Approval[] = [
 export const mockDocuments: Document[] = [
   {
     id: 'doc_1',
-    caseId: 'case_1',
+    caseId: '550e8400-e29b-41d4-a716-446655440001',
     filename: 'invoice_2024_001.pdf',
     category: 'invoice',
     version: 1,
@@ -379,7 +379,7 @@ export const mockDocuments: Document[] = [
 export const mockInvoices: Invoice[] = [
   {
     id: 'inv_001',
-    caseId: 'case_005',
+    caseId: '550e8400-e29b-41d4-a716-446655440005',
     caseName: 'Case #005 - Innovation Labs Inc',
     clientId: 'client_2',
     clientName: 'Sterling Financial Services',
@@ -404,7 +404,7 @@ export const mockInvoices: Invoice[] = [
   },
   {
     id: 'inv_002',
-    caseId: 'case_002',
+    caseId: '550e8400-e29b-41d4-a716-446655440002',
     caseName: 'Case #002 - Apex Consulting Group',
     clientId: 'client_1',
     clientName: 'ACME Manufacturing Ltd',
@@ -440,7 +440,7 @@ export const mockGdprRequests: GdprRequest[] = [
     description: 'Subject Access Request for all data held regarding Global Tech Solutions',
     dueDate: '2025-01-19T00:00:00Z',
     createdAt: '2024-12-19T11:00:00Z',
-    affectedCases: ['case_001'],
+    affectedCases: ['550e8400-e29b-41d4-a716-446655440001'],
   },
   {
     id: 'gdpr_002',
@@ -454,7 +454,7 @@ export const mockGdprRequests: GdprRequest[] = [
     createdAt: '2024-11-15T14:30:00Z',
     completedAt: '2024-12-14T16:20:00Z',
     downloadUrl: '/api/v1/gdpr/certificates/gdpr_002.pdf',
-    affectedCases: ['case_006'],
+    affectedCases: ['550e8400-e29b-41d4-a716-446655440006'],
   },
   {
     id: 'gdpr_003',
@@ -466,7 +466,7 @@ export const mockGdprRequests: GdprRequest[] = [
     description: 'Request to correct debtor contact information - phone number and email address',
     dueDate: '2025-01-05T00:00:00Z',
     createdAt: '2024-12-15T13:20:00Z',
-    affectedCases: ['case_003'],
+    affectedCases: ['550e8400-e29b-41d4-a716-446655440003'],
   },
   {
     id: 'gdpr_004',
@@ -478,7 +478,7 @@ export const mockGdprRequests: GdprRequest[] = [
     description: 'Data portability request for case data and communications',
     dueDate: '2025-01-12T00:00:00Z',
     createdAt: '2024-12-12T10:45:00Z',
-    affectedCases: ['case_006'],
+    affectedCases: ['550e8400-e29b-41d4-a716-446655440006'],
   },
   {
     id: 'gdpr_005',
@@ -490,7 +490,7 @@ export const mockGdprRequests: GdprRequest[] = [
     description: 'Objection to processing during dispute resolution - temporary hold on collection activities',
     dueDate: '2024-12-20T00:00:00Z',
     createdAt: '2024-12-10T09:30:00Z',
-    affectedCases: ['case_002'],
+    affectedCases: ['550e8400-e29b-41d4-a716-446655440002'],
   },
 ];
 
