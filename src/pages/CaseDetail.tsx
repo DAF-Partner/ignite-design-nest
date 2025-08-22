@@ -1,7 +1,7 @@
 // Professional Case Detail Page with Tabs for B2B Debt Collection Platform
 // Overview, Timeline, Documents, Messages, and Approvals
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, FileText, Clock, MessageSquare, CheckCircle, 
@@ -24,8 +24,9 @@ import { ConversationsList } from '@/components/chat/ConversationsList';
 import { ChatInterface } from '@/components/chat/ChatInterface';
 import { CreateConversationDialog } from '@/components/chat/CreateConversationDialog';
 import { useChat } from '@/hooks/useChat';
-import { mockCases, mockDocuments, mockEvents, mockMessages } from '@/lib/mockData';
+import { mockDocuments, mockEvents, mockMessages } from '@/lib/mockData';
 import { Case, Document, CaseEvent, Message, Conversation } from '@/types';
+import { caseApi } from '@/lib/api/caseApi';
 import { cn } from '@/lib/utils';
 
 export default function CaseDetail() {
@@ -35,13 +36,32 @@ export default function CaseDetail() {
   const [activeTab, setActiveTab] = useState('overview');
   const [actionRefreshTrigger, setActionRefreshTrigger] = useState(0);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const [case_, setCase] = useState<Case | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Chat functionality
   const { conversations, loading: chatLoading, createConversation } = useChat();
 
-  // Find the case
-  const case_ = useMemo(() => {
-    return mockCases.find(c => c.id === id);
+  // Fetch the case with privacy protection
+  useEffect(() => {
+    if (!id) return;
+    
+    const fetchCase = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const caseData = await caseApi.getCase(id);
+        setCase(caseData);
+      } catch (err) {
+        console.error('Error fetching case:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch case');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCase();
   }, [id]);
 
   // Get related data
@@ -66,14 +86,30 @@ export default function CaseDetail() {
     return conversations.filter(conv => conv.type === 'case' && conv.caseId === id);
   }, [conversations, id]);
 
-  if (!case_) {
+  if (loading) {
+    return (
+      <div className="p-6 text-center">
+        <div className="max-w-md mx-auto space-y-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
+          <h2 className="text-2xl font-bold">Loading Case...</h2>
+          <p className="text-muted-foreground">
+            Please wait while we fetch the case details.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !case_) {
     return (
       <div className="p-6 text-center">
         <div className="max-w-md mx-auto space-y-4">
           <FileText className="h-16 w-16 text-muted-foreground mx-auto" />
-          <h2 className="text-2xl font-bold">Case Not Found</h2>
+          <h2 className="text-2xl font-bold">
+            {error ? 'Error Loading Case' : 'Case Not Found'}
+          </h2>
           <p className="text-muted-foreground">
-            The case you're looking for doesn't exist or you don't have permission to view it.
+            {error || "The case you're looking for doesn't exist or you don't have permission to view it."}
           </p>
           <Button onClick={() => navigate('/cases')}>
             Back to Cases
