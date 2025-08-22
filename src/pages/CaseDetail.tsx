@@ -1,4 +1,3 @@
-
 // Professional Case Detail Page for B2B Debt Collection Platform
 // Comprehensive case view with chat, actions, documents, and audit trail
 
@@ -16,7 +15,7 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { Money } from '@/components/ui/money';
 import { ActionLogger } from '@/components/case/ActionLogger';
 import { ActionHistory } from '@/components/case/ActionHistory';
-import { ChatInterface } from '@/components/chat/ChatInterface';
+import { CaseChatInterface } from '@/components/chat/CaseChatInterface';
 import { caseApi } from '@/lib/api/caseApi';
 import { Case } from '@/types';
 import { toast } from 'sonner';
@@ -320,7 +319,7 @@ export default function CaseDetail() {
         </TabsContent>
 
         <TabsContent value="chat">
-          <ChatInterface caseId={case_.id} />
+          <CaseChatInterface caseId={case_.id} />
         </TabsContent>
 
         <TabsContent value="documents">
