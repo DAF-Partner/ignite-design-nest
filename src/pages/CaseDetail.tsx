@@ -6,8 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, FileText, Clock, MessageSquare, CheckCircle, 
   AlertCircle, Upload, Download, Eye, MoreHorizontal,
-  User, Calendar, Euro, Building, Phone, Mail, MapPin, Plus,
-  DollarSign, Folder
+  User, Calendar, Euro, Building, Phone, Mail, MapPin, Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -265,13 +264,13 @@ export default function CaseDetail() {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {/* Debtor Info */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Debtor Information */}
             <Card className="card-professional">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Debtor Info
+                  Debtor Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -305,158 +304,46 @@ export default function CaseDetail() {
                   Case Details
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Reference:</span>
-                  <span className="font-medium">{case_.reference}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Status:</span>
-                  <StatusBadge status={case_.status} />
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Created:</span>
-                  <span className="font-medium text-sm">
-                    {new Date(case_.createdAt).toLocaleDateString('en-GB')}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Updated:</span>
-                  <span className="font-medium text-sm">
-                    {new Date(case_.updatedAt).toLocaleDateString('en-GB')}
-                  </span>
-                </div>
-                {case_.lastActionAt && (
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Last Action:</span>
-                    <span className="font-medium text-sm">
-                      {new Date(case_.lastActionAt).toLocaleDateString('en-GB')}
-                    </span>
+                    <span className="text-muted-foreground">Reference:</span>
+                    <span className="font-medium">{case_.reference}</span>
                   </div>
-                )}
-                {case_.tags && case_.tags.length > 0 && (
-                  <div className="pt-2">
-                    <span className="text-muted-foreground text-sm">Tags:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {case_.tags.map((tag, index) => (
-                        <span key={index} className="px-2 py-1 bg-muted rounded text-xs">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Financial */}
-            <Card className="card-professional">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Financial
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Current Amount:</span>
-                  <span className="font-medium">
-                    <Money value={case_.amount} currency={case_.currency} />
-                  </span>
-                </div>
-                {case_.originalAmount && case_.originalAmount !== case_.amount && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Original Amount:</span>
+                    <span className="text-muted-foreground">Amount:</span>
                     <span className="font-medium">
-                      <Money value={case_.originalAmount} currency={case_.currency} />
+                      <Money value={case_.amount} currency={case_.currency} />
                     </span>
                   </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Currency:</span>
-                  <span className="font-medium">{case_.currency}</span>
-                </div>
-                {case_.dueDate && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Due Date:</span>
-                    <span className="font-medium text-sm">
-                      {new Date(case_.dueDate).toLocaleDateString('en-GB')}
+                    <span className="text-muted-foreground">Status:</span>
+                    <StatusBadge status={case_.status} />
+                  </div>
+                  {case_.originalCreditor && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Original Creditor:</span>
+                      <span className="font-medium">{case_.originalCreditor}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Created:</span>
+                    <span className="font-medium">
+                      {new Date(case_.createdAt).toLocaleDateString('en-GB')}
                     </span>
                   </div>
+                </div>
+                {case_.description && (
+                  <>
+                    <Separator />
+                    <div>
+                      <h5 className="font-medium mb-2">Description</h5>
+                      <p className="text-sm text-muted-foreground">{case_.description}</p>
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
-
-            {/* Creditor */}
-            <Card className="card-professional">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building className="h-5 w-5" />
-                  Creditor
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Client:</span>
-                  <span className="font-medium">{case_.clientName}</span>
-                </div>
-                {case_.originalCreditor && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Original Creditor:</span>
-                    <span className="font-medium">{case_.originalCreditor}</span>
-                  </div>
-                )}
-                {case_.assignedAgentName && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Assigned Agent:</span>
-                    <span className="font-medium">{case_.assignedAgentName}</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Case Type */}
-            <Card className="card-professional">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Folder className="h-5 w-5" />
-                  Case Type
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Category:</span>
-                  <span className="font-medium">Debt Collection</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Priority:</span>
-                  <span className="font-medium">
-                    {case_.amount > 10000 ? 'High' : case_.amount > 5000 ? 'Medium' : 'Standard'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Collection Stage:</span>
-                  <span className="font-medium capitalize">
-                    {case_.status.replace('_', ' ')}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Description (if available) */}
-            {case_.description && (
-              <Card className="card-professional lg:col-span-2 xl:col-span-3">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Description
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{case_.description}</p>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
           {/* Progress Visualization */}
