@@ -573,6 +573,44 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_case_with_privacy_protection: {
+        Args: { case_id_param: string }
+        Returns: {
+          assigned_agent_id: string
+          client_id: string
+          contract_id: string
+          created_at: string
+          created_by: string
+          currency_code: string
+          debt_status_id: string
+          debtor_address: Json
+          debtor_country: string
+          debtor_email: string
+          debtor_name: string
+          debtor_phone: string
+          debtor_tax_id: string
+          debtor_type: string
+          debtor_vat_id: string
+          id: string
+          is_gdpr_subject: boolean
+          lawful_basis_id: string
+          notes: string
+          reference: string
+          rejection_reason: string
+          review_notes: string
+          reviewed_at: string
+          reviewed_by: string
+          service_level_id: string
+          status: string
+          submitted_at: string
+          total_amount: number
+          total_fees: number
+          total_interest: number
+          total_penalties: number
+          total_vat: number
+          updated_at: string
+        }[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
