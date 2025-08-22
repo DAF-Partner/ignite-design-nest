@@ -1,7 +1,7 @@
 // Professional Cases List Page for B2B Debt Collection Platform
 // Advanced filtering, search, pagination, and role-based data scoping
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Filter, Download, FileText, Eye, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Money } from '@/components/ui/money';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { mockCases } from '@/lib/mockData';
+import { caseApi } from '@/lib/api/caseApi';
 import { Case, CaseStatus } from '@/types';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { cn } from '@/lib/utils';
@@ -31,22 +31,43 @@ export default function Cases() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [caseList, setCaseList] = useState<Case[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // Load cases from API
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await caseApi.getCases();
+        if (isMounted) setCaseList(data);
+      } catch (e: any) {
+        console.error('Failed to load cases', e);
+        if (isMounted) setError(e.message || 'Failed to load cases');
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, []);
+
   // Filter cases based on user role and permissions
   const filteredCases = useMemo(() => {
-    let cases = mockCases;
+    let data = caseList;
 
     // Role-based filtering
     if (hasRole('CLIENT') && user?.clientId) {
-      cases = cases.filter(c => c.clientId === user.clientId);
+      data = data.filter(c => c.clientId === user.clientId);
     } else if (hasRole('AGENT') && user?.id) {
-      cases = cases.filter(c => c.assignedAgentId === user.id);
+      data = data.filter(c => c.assignedAgentId === user.id);
     }
     // ADMIN and DPO see all cases
 
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      cases = cases.filter(c => 
+      data = data.filter(c => 
         c.debtor.name.toLowerCase().includes(query) ||
         c.debtor.email.toLowerCase().includes(query) ||
         c.reference.toLowerCase().includes(query)
@@ -55,11 +76,11 @@ export default function Cases() {
 
     // Status filter
     if (statusFilter !== 'all') {
-      cases = cases.filter(c => c.status === statusFilter);
+      data = data.filter(c => c.status === statusFilter);
     }
 
     // Sort
-    cases.sort((a, b) => {
+    data = [...data].sort((a, b) => {
       let aValue: any, bValue: any;
       
       switch (sortBy) {
@@ -83,8 +104,8 @@ export default function Cases() {
       }
     });
 
-    return cases;
-  }, [mockCases, user, hasRole, searchQuery, statusFilter, sortBy, sortOrder]);
+    return data;
+  }, [caseList, user, hasRole, searchQuery, statusFilter, sortBy, sortOrder]);
 
   // Pagination
   const totalPages = Math.ceil(filteredCases.length / ITEMS_PER_PAGE);
@@ -275,7 +296,19 @@ export default function Cases() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedCases.length === 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-12">
+                  <div className="text-muted-foreground">Loading cases...</div>
+                </TableCell>
+              </TableRow>
+            ) : error ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-12">
+                  <div className="text-destructive">Failed to load cases: {error}</div>
+                </TableCell>
+              </TableRow>
+            ) : paginatedCases.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
