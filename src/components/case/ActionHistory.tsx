@@ -89,6 +89,7 @@ const PRIORITY_COLORS: Record<string, string> = {
   urgent: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
 };
 
+<<<<<<< HEAD
 // Demo test data
 const TEST_ACTIONS: Action[] = [
   {
@@ -168,6 +169,8 @@ const TEST_ACTIONS: Action[] = [
   }
 ];
 
+=======
+>>>>>>> f6345c3 (Initial project upload)
 export function ActionHistory({ caseId, refreshTrigger }: ActionHistoryProps) {
   const [actions, setActions] = useState<Action[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -182,11 +185,16 @@ export function ActionHistory({ caseId, refreshTrigger }: ActionHistoryProps) {
 
       if (error) throw error;
 
+<<<<<<< HEAD
       const dbActions = (data || []).map(action => ({
+=======
+      setActions((data || []).map(action => ({
+>>>>>>> f6345c3 (Initial project upload)
         ...action,
         metadata: action.metadata && typeof action.metadata === 'object' 
           ? action.metadata as Action['metadata'] 
           : null
+<<<<<<< HEAD
       }));
 
       // Use test data if no real actions exist
@@ -196,6 +204,12 @@ export function ActionHistory({ caseId, refreshTrigger }: ActionHistoryProps) {
       toast.error('Failed to load action history');
       // Fall back to test data on error
       setActions(TEST_ACTIONS);
+=======
+      })));
+    } catch (error) {
+      console.error('Error fetching actions:', error);
+      toast.error('Failed to load action history');
+>>>>>>> f6345c3 (Initial project upload)
     } finally {
       setIsLoading(false);
     }
@@ -238,6 +252,7 @@ export function ActionHistory({ caseId, refreshTrigger }: ActionHistoryProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
+<<<<<<< HEAD
           {actions.map((action, index) => {
             const actionInfo = ACTION_TYPE_LABELS[action.action_type] || {
               label: action.action_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
@@ -326,6 +341,104 @@ export function ActionHistory({ caseId, refreshTrigger }: ActionHistoryProps) {
               </div>
             );
           })}
+=======
+          {actions.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <Clock className="h-16 w-16 mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg font-medium mb-2">No Actions Logged</h3>
+              <p className="text-sm">Actions taken on this case will appear here</p>
+            </div>
+          ) : (
+            actions.map((action, index) => {
+              const actionInfo = ACTION_TYPE_LABELS[action.action_type] || {
+                label: action.action_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                icon: Clock,
+                category: 'Other'
+              };
+              const ActionIcon = actionInfo.icon;
+              const hasMetadata = action.metadata && Object.keys(action.metadata).length > 0;
+
+              return (
+                <div key={action.id} className="relative">
+                  <div className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="p-2.5 bg-primary/10 rounded-full">
+                        <ActionIcon className="h-4 w-4 text-primary" />
+                      </div>
+                      {index < actions.length - 1 && (
+                        <div className="h-full w-0.5 bg-border mt-3"></div>
+                      )}
+                    </div>
+                    
+                    <div className="flex-1 pb-6">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge 
+                            variant="secondary" 
+                            className={ACTION_TYPE_COLORS[action.action_type] || ACTION_TYPE_COLORS.other}
+                          >
+                            {actionInfo.label}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {actionInfo.category}
+                          </Badge>
+                          {action.metadata?.priority && action.metadata.priority !== 'medium' && (
+                            <Badge 
+                              variant="secondary"
+                              className={PRIORITY_COLORS[action.metadata.priority]}
+                            >
+                              {action.metadata.priority.charAt(0).toUpperCase() + action.metadata.priority.slice(1)} Priority
+                            </Badge>
+                          )}
+                          {action.metadata?.duration_minutes && (
+                            <Badge variant="outline" className="text-xs">
+                              {action.metadata.duration_minutes}min
+                            </Badge>
+                          )}
+                        </div>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
+                          {new Date(action.created_at).toLocaleString('en-GB')}
+                        </span>
+                      </div>
+
+                      {/* Description */}
+                      <div className="space-y-3">
+                        <p className="text-sm leading-relaxed">{action.description}</p>
+                        
+                        {/* Additional Details */}
+                        {hasMetadata && (
+                          <>
+                            <Separator />
+                            <div className="space-y-2">
+                              {action.metadata?.outcome && (
+                                <div>
+                                  <h5 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                                    Outcome
+                                  </h5>
+                                  <p className="text-sm text-foreground">{action.metadata.outcome}</p>
+                                </div>
+                              )}
+                              
+                              {action.metadata?.next_action && (
+                                <div>
+                                  <h5 className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                                    Next Action Recommended
+                                  </h5>
+                                  <p className="text-sm text-foreground">{action.metadata.next_action}</p>
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+>>>>>>> f6345c3 (Initial project upload)
         </div>
       </CardContent>
     </Card>
